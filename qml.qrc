@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>next_page.qml</file>
+        <file>CustomRow.qml</file>
+        <file>Description.qml</file>
+        <file>TxtSetting.qml</file>
+        <file>SwitchMode.qml</file>
+        <file>BasicFunctions.qml</file>
+    </qresource>
+</RCC>
