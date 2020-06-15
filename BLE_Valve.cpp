@@ -162,23 +162,155 @@ void BLE_Valve::boost(bool onOff)
 
 }
 
+void BLE_Valve::setDateTime(const QDate &newDate, const QTime &newTime)
+{
+
+    QByteArray value;
+    value.resize(7);
+
+        // set date and time
+        value[0] = SET_DATE_TIME;
+        value[1] = static_cast<char>(newDate.year() % 100);
+        value[2] = static_cast<char>(newDate.month());
+        value[3] = static_cast<char>(newDate.day());
+        value[4] = static_cast<char>(newTime.hour());
+        value[5] = static_cast<char>(newTime.minute());
+        value[6] = static_cast<char>(newTime.second());
+
+        eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
+}
+
+void BLE_Valve::modifyComfortReducedTemp(const float &newComfort, const float &newReduced)
+{
+    QByteArray value;
+    value.resize(3);
+    value[0] = MODIFY_COMF_RED;
+
+    if(!static_cast<bool>(newComfort))
+        value[1] = static_cast<char>(comfortTemp*2);
+    else
+        value[1] = static_cast<char>(newComfort*2);
+
+
+    if(!static_cast<bool>(newReduced))
+        value[2] = static_cast<char>(reducedTemp*2);
+    else
+        value[2] = static_cast<char>(newReduced*2);
+
+    eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
+}
+
+void BLE_Valve::setOffsetTemp(const float offset)
+{
+    QByteArray value;
+    value.resize(2);
+    value[0] = SET_OFFSET;
+    value[1] = static_cast<char>((2*offset)+7);
+
+    eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
+}
+
+void BLE_Valve::modifyWindowMode(const float windowTemp, const int durationTime)
+{
+    QByteArray value;
+    value.resize(3);
+
+    value[0] = WINDOW_MODE;
+    value[1] = static_cast<char>(windowTemp * 2);
+    value[2] = static_cast<char>(durationTime/5);
+
+    eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
+}
+
+void BLE_Valve::setHolidayMode(const QString hTemp, const QTime hTime, const QString daytime, const QDate hDate)
+{
+    QByteArray value;
+    value.resize(6);
+
+    int hour_2 = 0;
+    if (daytime == "am")
+        hour_2 = hTime.hour();
+    else
+        hour_2 = hTime.hour() + 12;
+
+    value[0] = HOLIDAY;
+    value[1] = static_cast<char>((hTemp.toFloat() * 2) + 128);
+    value[2] = static_cast<char>(hDate.day());
+    value[3] = static_cast<char>(hDate.year() % 100);
+    value[4] = static_cast<char>((hour_2 * 2) + (hTime.minute() / 30));
+    value[5] = static_cast<char>(hDate.month());
+
+    eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
+}
+
+
 void BLE_Valve::getCharacteristicWritten(const QLowEnergyCharacteristic &info,
                                           const QByteArray &value)
 {
-/*    QString value_text = "";
-    QString info_text = "";
-    for (auto i : value)
-    {
-        value_text += QString(i) + " ";
-    }
-    for (auto i : info.value())
-    {
-        info_text += QString(i) + " ";
-    }
-*/
-
 
     qDebug() << "Response characteristic UUID: " << info.uuid();
     qDebug() << "Response characteristic VALUE: " << info.value().size();
     qDebug() << "Response characteristic QByteArray SIZE: " << value.size();
+    qDebug() << "Response SENT VALUE: " << info.value().toHex();
+}
+
+
+
+void BLE_Valve::getComfortReducedModified(const QLowEnergyCharacteristic &info,
+                                          const QByteArray &value)
+{
+    comfortTemp = value.at(1);
+    reducedTemp = value.at(2);
+}
+
+void BLE_Valve::getOffsetTempSet(const QLowEnergyCharacteristic &info, const QByteArray &value)
+{
+    offsetTemp = value.at(1);
+}
+
+void BLE_Valve::getWindowModeModified(const QLowEnergyCharacteristic &info, const QByteArray &value)
+{
+    windowModeTemp = value.at(1)/2;
+    windowModeDuration = value.at(2) * 5;
+}
+
+void BLE_Valve::getDailyProfileResponse(const QLowEnergyCharacteristic &info, const QByteArray &value)
+{
+    qDebug() << "inside daily response";
+    DailyProfile * ptr = new DailyProfile(value);
+
+    dailyProfiles.append(ptr);
+
+    QString result = value.toHex();
+    result += QLatin1Char('\n');
+
+
+    qDebug() << "Result: " <<result;
+
+      emit dailyProfileReceived();
+
+
+}
+
+void BLE_Valve::getDailyProfileResponse2(const QLowEnergyCharacteristic &info, const QByteArray &value)
+{
+    qDebug() << "REceived notif";
+
+    QString result = value;
+    result += QLatin1Char('\n');
+    result += value.toHex();
+
+    qDebug() << result;
+}
+
+void BLE_Valve::askForDailyProfiles(int day)
+{
+    qDebug() << "inside BLE_Valve; day = " << day;
+    QByteArray value;
+    value.resize(2);
+
+    value[0] = READ_PROFILE;
+    value[1] = static_cast<char>(day);
+
+        eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
 }

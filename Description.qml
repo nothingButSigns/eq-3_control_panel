@@ -5,13 +5,10 @@ Rectangle {
 
     property string descText: ""
 
-    anchors.fill: parent
-
-
     Text {
         font.pointSize: 12
-        anchors.centerIn: parent
-        anchors.horizontalCenter: parent.horizontalCenter
+        //anchors.left: parent
+       // anchors.leftMargin: 0
         text: descText
         //wrapMode: Text.WordWrap
     }
@@ -20,6 +17,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    D{i:0;autoSize:true;height:0;width:0}
 }
 ##^##*/

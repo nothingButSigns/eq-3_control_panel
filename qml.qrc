@@ -7,5 +7,16 @@
         <file>TxtSetting.qml</file>
         <file>SwitchMode.qml</file>
         <file>BasicFunctions.qml</file>
+        <file>Settings.qml</file>
+        <file>General.qml</file>
+        <file>DateTimeDialog.qml</file>
+        <file>TimeInput.qml</file>
+        <file>ComfRedDialog.qml</file>
+        <file>HolidayModeDialog.qml</file>
+        <file>WindowModeDialog.qml</file>
+        <file>TempOffsetDialog.qml</file>
+        <file>Hours.qml</file>
+        <file>EndDateDialog.qml</file>
+        <file>DailyProfiles.qml</file>
     </qresource>
 </RCC>

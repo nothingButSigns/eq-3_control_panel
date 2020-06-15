@@ -14,11 +14,17 @@ public:
     ~BLE_Characteristic();
 
     QLowEnergyCharacteristic getCharacteristic();
+    QLowEnergyCharacteristic getNoifCharacteristic();
+    void populateDescriptors();
+    void getDescInfo();
 
 
     private:
+    QList <QLowEnergyDescriptor> descriptors;
+
 
     QLowEnergyCharacteristic ble_characteristic;
+    QLowEnergyCharacteristic notification_char;
 };
 
 

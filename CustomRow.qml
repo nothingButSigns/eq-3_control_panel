@@ -6,13 +6,14 @@ import QtQuick.Controls 2.0
 Row {
 
         width: parent.width
-        height: 40
+        height: 20
         opacity: 1
+
     }
 
 
 /*##^##
 Designer {
-    D{i:0;height:40;width:311}
+    D{i:0;height:40;width:400}
 }
 ##^##*/

@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QString>
 #include <QList>
+#include <cmath>
 
 
 BLE_device::BLE_device()
@@ -187,6 +188,10 @@ void BLE_device::addCharacteristics()
             connectedDevice->eqCharacteristic = new BLE_Characteristic(ch);
 
         }
+        else if (ch.uuid().toString() == NOTIFICATION)
+        {
+            connectedDevice->notifCharacteristic = new BLE_Characteristic(ch);
+        }
     }
 
     qDebug() << "Characteristics amount: " << connectedDevice->Characteristics.size();
@@ -231,7 +236,12 @@ void BLE_device::discoverServiceDetails(QLowEnergyService::ServiceState sState)
     for (auto ch : qChars)
     {
         BLE_Characteristic *c = new BLE_Characteristic(ch);
+        qDebug() << "ch.uuid: " << ch.uuid().toString();
+        c->populateDescriptors();
+        c->getDescInfo();
+
         connectedDevice->Characteristics.append(c);
+
  /*       qDebug() << "Name: " << ch.name();
         qDebug() << "Properties: " << ch.properties();
         qDebug() << "Handler: " << ch.handle();
@@ -245,6 +255,11 @@ void BLE_device::discoverServiceDetails(QLowEnergyService::ServiceState sState)
             connectedDevice->eqCharacteristic = new BLE_Characteristic(ch);
             qDebug() << "EQ-3 control characteristic has been found";
         }
+        else if (ch.uuid().toString() == NOTIFICATION)
+        {
+            connectedDevice->notifCharacteristic = new BLE_Characteristic(ch);
+        }
+
         charAmount++;
         emit characteristicsUpdated();
     }
@@ -268,6 +283,22 @@ QVariant BLE_device::getFoundValves()
 quint8 BLE_device::getCharAmount()
 {
     return charAmount;
+}
+
+QVariant BLE_device::getDailyProfiles()
+{
+    return QVariant::fromValue(connectedDevice->dailyProfiles);
+}
+
+QVariant BLE_device::getProfile()
+{
+    DailyProfile *ptr = qobject_cast<DailyProfile *>(connectedDevice->dailyProfiles.last());
+    return QVariant::fromValue(ptr->Profile());
+}
+
+BLE_Valve *BLE_device::getDevice()
+{
+    return connectedDevice;
 }
 
 //void BLE_device::connected()
@@ -336,3 +367,110 @@ void BLE_device::boost(bool onOff)
     connectedDevice->boost(onOff);
 
 }
+
+void BLE_device::setDateTime(const QDate newDate, const QTime newTime)
+{
+    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
+            , &BLE_Valve::getCharacteristicWritten);
+
+    connectedDevice->setDateTime(newDate, newTime);
+
+}
+
+void BLE_device::modifyComfortReducedTemp(const QString &newComfort, const QString &newReduced)
+{
+    float comfTemp = newComfort.toFloat();
+    float redTemp = newReduced.toFloat();
+
+    if (comfTemp > (floor(comfTemp)+0.5)) comfTemp = floor(comfTemp) + 0.5;
+    else comfTemp = floor(comfTemp);
+
+    if (redTemp > (floor(redTemp)+0.5)) redTemp = floor(redTemp) + 0.5;
+    else redTemp = floor(redTemp);
+
+
+    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
+            , &BLE_Valve::getComfortReducedModified);
+
+    connectedDevice->modifyComfortReducedTemp(comfTemp, redTemp);
+
+}
+
+void BLE_device::setOffsetTemp(const QString &offset)
+{
+    float offsetTemp = offset.toFloat();
+
+    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
+            , &BLE_Valve::getOffsetTempSet);
+
+    connectedDevice->setOffsetTemp(offsetTemp);
+
+}
+
+void BLE_device::modifyWindowMode(const float windowTemp, const int durationTime)
+{
+    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
+            , &BLE_Valve::getWindowModeModified);
+
+    connectedDevice->modifyWindowMode(windowTemp, durationTime);
+}
+
+void BLE_device::setHolidayMode(const QString hTemp, const QTime hTime, const QString daytime, const QDate hDate)
+{
+    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
+            , &BLE_Valve::getCharacteristicWritten);
+
+    connectedDevice->setHolidayMode(hTemp, hTime, daytime, hDate);
+
+}
+
+void BLE_device::askForDailyProfiles()
+{
+    qDebug() << "inside askFor...";
+
+    BLE_Characteristic *bch = nullptr;
+
+    for (auto ch : connectedDevice->Characteristics)
+    {
+        bch = qobject_cast <BLE_Characteristic *>(ch);
+            if (bch->getCharacteristic().uuid().toString() == NOTIFICATION)
+                    break;
+    }
+
+    if (bch)
+    {
+        QLowEnergyDescriptor d = bch->getCharacteristic().descriptor(
+                    QBluetoothUuid::ClientCharacteristicConfiguration);
+
+        if(d.isValid())
+        {
+
+            if(bch->getCharacteristic().properties() & QLowEnergyCharacteristic::Notify)
+                // enable receiving notifications ("0100" - enable; "0000" - disable)
+                connectedDevice->eqService->getService()->writeDescriptor(d, QByteArray::fromHex("0100"));
+        }
+
+        connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicChanged, connectedDevice, &BLE_Valve::getDailyProfileResponse);
+        connect(connectedDevice, &BLE_Valve::dailyProfileReceived, this, &BLE_device::dailyProfilesFound);
+        connect(connectedDevice, &BLE_Valve::dailyProfileReceived, this, &BLE_device::askForNextProfile);
+
+
+            connectedDevice->askForDailyProfiles(0);
+
+    }
+
+}
+
+void BLE_device::askForNextProfile()
+{
+    qDebug() << "inside 'askForNextProfile'";
+
+    if (connectedDevice->dailyProfiles.size() == 7)
+        return;
+
+
+    ++day;
+    connectedDevice->askForDailyProfiles(day);
+
+}
+

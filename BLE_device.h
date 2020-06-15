@@ -6,9 +6,11 @@
 #include <QLowEnergyController>
 #include <QList>
 #include <QVariant>
+#include <QDate>
 #include "BLE_Valve.h"
 #include "BLE_Service.h"
 #include "BLE_Characteristic.h"
+
 
 class BLE_device: public QObject
 {
@@ -18,6 +20,8 @@ class BLE_device: public QObject
     Q_PROPERTY(QVariant foundValves READ getFoundValves NOTIFY valvesDiscovered)
     Q_PROPERTY(QString state READ getState WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(quint8 characteristicsAmount READ getCharAmount WRITE updateCharAmount NOTIFY characteristicsUpdated)
+    Q_PROPERTY(QVariant dailyProfiles READ getDailyProfiles NOTIFY dailyProfilesFound)
+    Q_PROPERTY(QVariant Profile READ getProfile NOTIFY newProfile)
 
 
 public:
@@ -28,10 +32,15 @@ public:
     QVariant getCharacteristics();
     QVariant getFoundValves();
     quint8 getCharAmount(); //to know if all characteristics has been found and enable communicating with a valve if so
+    QVariant getDailyProfiles();
+    QVariant getProfile();
+
 
 
 
 public slots:
+    BLE_Valve *getDevice();
+
     void startDeviceDiscovery();
     void connectToDevice(QString address);
 //    void readCharacteristic();
@@ -44,6 +53,13 @@ public slots:
     void setReduced(bool onOff);
     void setComfort(bool onOff);
     void boost(bool onOff);
+    void setDateTime(const QDate newDate, const QTime newTime);
+    void modifyComfortReducedTemp(const QString &newComfort, const QString &newReduced);
+    void setOffsetTemp(const QString &offset);
+    void modifyWindowMode(const float windowTemp, const int durationTime);
+    void setHolidayMode(const QString hTemp, const QTime hTime, const QString daytime, const QDate hDate);
+    void askForDailyProfiles();
+    void askForNextProfile();
 
 
 private slots:
@@ -62,6 +78,10 @@ Q_SIGNALS:
     void characteristicFound();
     void valvesDiscovered();
     void stateChanged();
+    void reducedChanged();
+    void comfortChanged();
+    void dailyProfilesFound();
+    void newProfile();
 
 private:
     void setState(const QString &new_state);
@@ -69,6 +89,7 @@ private:
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
     QList <QObject *> Valves;
     QList <QObject *> Lightbulbs;
+
     BLE_Valve* connectedDevice;
 
     QLowEnergyController *LEcontroller = nullptr;
@@ -76,6 +97,8 @@ private:
     QString state;
     quint8 serviceIndex = 0;
     quint8 charAmount = 0;
+    quint8 day = 0;
+
 };
 
 

@@ -4,17 +4,18 @@ import QtQuick.Controls 2.0
 Item {
     id: element
     anchors.fill: parent
+    property var inputHeight: 20
 
     TextInput {
 
         x: 76
         y: 10
         width: 80
-        height: 20
+        height: parent.inputHeight
         text: qsTr("New temp")
 
-        anchors.verticalCenter: element.verticalCenter
-        anchors.verticalCenterOffset: 0
+       // anchors.verticalCenter: element.verticalCenter
+       // anchors.verticalCenterOffset: 0
 
         activeFocusOnPress: true
         readOnly: false

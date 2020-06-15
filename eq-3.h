@@ -5,6 +5,7 @@
 
 #define SERVICE_UUID "{3e135142-654f-9090-134a-a6ff5bb77046}"
 #define CHAR_UUID "{3fa4585a-ce4a-3bad-db4b-b8df8179ea09}"
+#define NOTIFICATION "{d0e8434d-cd29-0996-af41-6c90f4e0eb2a}"
 
 // 0-bytes
 #define SET_DATE_TIME 0x03

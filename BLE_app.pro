@@ -1,7 +1,7 @@
 QT += quick
 QT += quick bluetooth
 
-CONFIG += c++11
+CONFIG += c++11 qml_debug
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -19,7 +19,9 @@ SOURCES += \
         BLE_Service.cpp \
         BLE_Valve.cpp \
         BLE_device.cpp \
-        main.cpp
+        DailyProfile.cpp \
+        main.cpp \
+        submodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -39,4 +41,6 @@ HEADERS += \
     BLE_Service.h \
     BLE_Valve.h \
     BLE_device.h \
-    eq-3.h
+    DailyProfile.h \
+    eq-3.h \
+    submodel.h

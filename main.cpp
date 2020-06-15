@@ -3,6 +3,7 @@
 #include <QQmlContext>
 
 #include "BLE_device.h"
+#include "BLE_Valve.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,8 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     BLE_device d;
+
+
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -23,6 +26,7 @@ int main(int argc, char *argv[])
     d.startDeviceDiscovery();
 
         engine.rootContext()->setContextProperty("BLEdevice", &d);
+
     engine.load(url);
 
 

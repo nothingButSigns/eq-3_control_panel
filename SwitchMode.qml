@@ -5,6 +5,7 @@ Item {
 
 
     property alias modeSwitchTop: modeSwitch
+
     Switch {
         id: modeSwitch
         width: 150
