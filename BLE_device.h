@@ -11,17 +11,21 @@
 #include "BLE_Service.h"
 #include "BLE_Characteristic.h"
 
+#include <QAbstractListModel>
 
-class BLE_device: public QObject
+
+class BLE_device: public QAbstractListModel
 {
     Q_OBJECT
+    //Q_ENUMS(SOmeModelRoles)
   //  Q_PROPERTY(QVariant searching READ discoveryFinished NOTIFY startConnecting)
 //    Q_PROPERTY(QVariant characteristicList READ getCharacteristics NOTIFY characteristicsUpdated)
     Q_PROPERTY(QVariant foundValves READ getFoundValves NOTIFY valvesDiscovered)
     Q_PROPERTY(QString state READ getState WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(quint8 characteristicsAmount READ getCharAmount WRITE updateCharAmount NOTIFY characteristicsUpdated)
-    Q_PROPERTY(QVariant dailyProfiles READ getDailyProfiles NOTIFY dailyProfilesFound)
+    //Q_PROPERTY(QVariant dailyProfiles READ getDailyProfiles NOTIFY dailyProfilesFound)
     Q_PROPERTY(QVariant Profile READ getProfile NOTIFY newProfile)
+
 
 
 public:
@@ -35,7 +39,22 @@ public:
     QVariant getDailyProfiles();
     QVariant getProfile();
 
+    ///////// QAbstract model interface
+    enum SOmeModelRoles {
+        CONNECTEDDEVICE = Qt::UserRole+1,
+        SOMETEXT
+    };
 
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
+
+    Q_INVOKABLE void askForDailyProfiles();
+
+
+protected:
+    QHash<int, QByteArray> m_roles;
+    BLE_Valve* connectedDevice;
 
 
 public slots:
@@ -58,7 +77,7 @@ public slots:
     void setOffsetTemp(const QString &offset);
     void modifyWindowMode(const float windowTemp, const int durationTime);
     void setHolidayMode(const QString hTemp, const QTime hTime, const QString daytime, const QDate hDate);
-    void askForDailyProfiles();
+
     void askForNextProfile();
 
 
@@ -83,14 +102,13 @@ Q_SIGNALS:
     void dailyProfilesFound();
     void newProfile();
 
+
 private:
     void setState(const QString &new_state);
     void updateCharAmount(const quint8 amount);
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
     QList <QObject *> Valves;
     QList <QObject *> Lightbulbs;
-
-    BLE_Valve* connectedDevice;
 
     QLowEnergyController *LEcontroller = nullptr;
 

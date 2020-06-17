@@ -6,6 +6,7 @@
 
 class Submodel: public QAbstractListModel
 {
+    Q_OBJECT
     Q_PROPERTY(QString temp READ temp WRITE setTemp NOTIFY tempChanged)
     Q_PROPERTY(QString time READ time WRITE setTime NOTIFY timeChanged)
 public:
@@ -23,6 +24,11 @@ public:
     void setTime(QString time);
 
     //QAbstract model interface
+
+Q_SIGNALS:
+    void tempChanged();
+    void timeChanged();
+
 
 public:
     int rowCount(const QModelIndex &parent) const;

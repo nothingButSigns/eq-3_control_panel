@@ -11,11 +11,12 @@
 #include "DailyProfile.h"
 #include <QMetaType>
 #include <QTimer>
+#include <QAbstractListModel>
 
 
 Q_DECLARE_METATYPE (QList <QByteArray *>);
 
-class BLE_Valve: public QObject
+class BLE_Valve: public QAbstractListModel
 {
 
 
@@ -25,6 +26,25 @@ class BLE_Valve: public QObject
 
 
 public:
+
+    ////AbstractLIstMOdel interface
+    enum SubModelRoles {
+        DAY = Qt::UserRole+1,
+        DPROFILE
+    };
+
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
+    QString text = "tomato";
+
+protected:
+    QVector <DailyProfile*> m_models;
+    QHash<int, QByteArray> m_roles;
+
+
+public:
+
     BLE_Valve() = default; //the compiler creates constructor with no args even if other constructors are present
     BLE_Valve(const QBluetoothDeviceInfo &d);
     ~BLE_Valve();
@@ -35,11 +55,11 @@ public:
     QString getAddress();
     void setCustomName(QString name);
 
-    enum ProfileRequestState {
-        ProcessingProfileData = 0,
-        ReadyForMore
-    } reqState;
-    Q_ENUM(ProfileRequestState)
+//    enum ProfileRequestState {
+//        ProcessingProfileData = 0,
+//        ReadyForMore
+//    } reqState;
+//    Q_ENUM(ProfileRequestState)
 
 public slots:
     void setTemperature(QString temperature);
@@ -72,6 +92,8 @@ public slots:
 Q_SIGNALS:
     void devChanged();
     void dailyProfileReceived();
+    void deviceCreated();
+
 
     friend class BLE_device;
 
@@ -88,7 +110,7 @@ private:
 protected:
     QList <QObject *> Services;
     QList <QObject *> Characteristics;
-    QList <QObject *> dailyProfiles;
+    QList <DailyProfile *> dailyProfiles;
 
 
     BLE_Characteristic *eqCharacteristic = nullptr;

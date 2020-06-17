@@ -11,9 +11,7 @@ QVariant DailyProfile::data(const QModelIndex &index, int role) const
     if(!index.isValid())
         return QVariant();
 
-    if(role == DAY)
-        return day;
-    else if (role == TEMP)
+    if (role == TEMP)
         return m_models.at(index.row())->temp();
     else if (role == TIME)
         return m_models.at(index.row())->time();
@@ -25,7 +23,6 @@ QVariant DailyProfile::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> DailyProfile::roleNames() const
 {
     QHash <int, QByteArray> roles;
-    roles[DAY] = "Day";
     roles[TIME] = "Time";
     roles[TEMP] = "Temperature";
 
@@ -40,7 +37,9 @@ DailyProfile::DailyProfile(const QByteArray &array)
     // get day of the week
     //DaysOfTheWeek dayName = static_cast<DaysOfTheWeek>(profile->at(1));
    // day = static_cast<QString>(profile->at(1));
-    day = assignDay(static_cast<int>(profile->at(1)));
+
+    setDay(assignDay(static_cast<int>(profile->at(1))));
+
 
     qDebug() << "day from BAILY PROFILE CLASS: " << day;
 
@@ -93,18 +92,28 @@ DailyProfile::DailyProfile(const QByteArray &array)
 //        evModel.addEvent(Event("14", "18"));
 //        evModel.addEvent(Event("10", "33"));
 
-        m_models.append(new Submodel("22", "54"));
-        m_models.append(new Submodel("55", "66"));
-        m_models.append(new Submodel("33", "44"));
+//        m_models.append(new Submodel("22", "54"));
+//        m_models.append(new Submodel("55", "66"));
+//        m_models.append(new Submodel("33", "44"));
 
     }
 }
+
+//DailyProfile::DailyProfile(const QString someText)
+//{
+//    day = someText;
+//}
 
 DailyProfile::~DailyProfile(){}
 
 QString DailyProfile::readDay()
 {
     return day;
+}
+
+void DailyProfile::setDay(QString newDay)
+{
+    day = newDay;
 }
 
 QVariant DailyProfile::Profile()

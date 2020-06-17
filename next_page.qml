@@ -174,7 +174,7 @@ Rectangle {
             onClicked: {
                 if (checked)
                 {
-                    BLEdevice.askForDailyProfiles()
+                    BLEdevice.askForDailyProfiles();
                     swipeView.setCurrentIndex(2)
 
                 }

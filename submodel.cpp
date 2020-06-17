@@ -45,4 +45,3 @@ QHash<int, QByteArray> Submodel::roleNames() const
 {
 
 }
-

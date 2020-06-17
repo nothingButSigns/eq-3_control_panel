@@ -22,6 +22,7 @@ BLE_device::BLE_device()
     connect(this, &BLE_device::serviceAdded, this, &BLE_device::addCharacteristics);
 
 
+
 }
 
 BLE_device::~BLE_device()
@@ -117,7 +118,7 @@ void BLE_device::connectToDevice(QString address)
     connect(LEcontroller, &QLowEnergyController::discoveryFinished, this, &BLE_device::addCharacteristics);
     connect(this, &BLE_device::nextCharacteristic, this, &BLE_device::addCharacteristics);
     //connect(this, &BLE_device::characteristicFound, connectedDevice, &BLE_Valve::setTemperature);
-
+        connect(connectedDevice, &BLE_Valve::deviceCreated, this, &BLE_device::askForDailyProfiles);
 
     LEcontroller->setRemoteAddressType(QLowEnergyController::PublicAddress);
     qDebug() << "connecting to device";
@@ -296,6 +297,33 @@ QVariant BLE_device::getProfile()
     return QVariant::fromValue(ptr->Profile());
 }
 
+int BLE_device::rowCount(const QModelIndex &parent) const
+{
+    return 1;
+}
+
+QVariant BLE_device::data(const QModelIndex &index, int role) const
+{
+    if(!index.isValid())
+        return QVariant();
+
+    if(role == CONNECTEDDEVICE)
+        return QVariant::fromValue(connectedDevice);
+    else if (role == SOMETEXT)
+        return connectedDevice->text;
+
+    return QVariant();
+}
+
+QHash<int, QByteArray> BLE_device::roleNames() const
+{
+    QHash <int, QByteArray> roles;
+    roles[CONNECTEDDEVICE] = "ConnectedDevice";
+    roles[SOMETEXT] = "someText";
+
+    return roles;
+}
+
 BLE_Valve *BLE_device::getDevice()
 {
     return connectedDevice;
@@ -466,7 +494,10 @@ void BLE_device::askForNextProfile()
     qDebug() << "inside 'askForNextProfile'";
 
     if (connectedDevice->dailyProfiles.size() == 7)
+    {
+        emit dailyProfilesFound();
         return;
+    }
 
 
     ++day;

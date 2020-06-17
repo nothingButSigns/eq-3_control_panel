@@ -1,8 +1,42 @@
 #include "BLE_Valve.h"
 
+int BLE_Valve::rowCount(const QModelIndex &parent) const
+{
+    return m_models.size();
+}
+
+QVariant BLE_Valve::data(const QModelIndex &index, int role) const
+{
+    if(!index.isValid())
+        return QVariant();
+
+    if(role == DAY)
+        return m_models.at(index.row())->readDay();
+    else if(role == DPROFILE)
+        return QVariant::fromValue(m_models.at(index.row()));
+
+    return QVariant();
+}
+
+QHash<int, QByteArray> BLE_Valve::roleNames() const
+{
+    QHash <int, QByteArray> roles;
+    roles[DAY] = "DayM";
+    roles[DPROFILE] = "dailyProfile";
+
+    return roles;
+}
+
 BLE_Valve::BLE_Valve(const QBluetoothDeviceInfo &d)
 {
     BtDevice = d;
+      //  emit deviceCreated();
+
+
+//    m_models.append(new DailyProfile("MOnday"));
+//        m_models.append(new DailyProfile("Tuesday"));
+//            m_models.append(new DailyProfile("Wednesday"));
+//                m_models.append(new DailyProfile("Thursday"));
 }
 
 BLE_Valve::~BLE_Valve()
@@ -278,9 +312,14 @@ void BLE_Valve::getDailyProfileResponse(const QLowEnergyCharacteristic &info, co
 {
     qDebug() << "inside daily response";
     DailyProfile * ptr = new DailyProfile(value);
+    beginInsertRows(QModelIndex(), m_models.size(), m_models.size());
 
-    dailyProfiles.append(ptr);
+    m_models.append(ptr);
+    endInsertRows();
+   // dataChanged(index(m_models.size()-1), index(m_models.size()-1), QVector<int>()<<DAY);
 
+
+    //m_models.append(ptr);
     QString result = value.toHex();
     result += QLatin1Char('\n');
 

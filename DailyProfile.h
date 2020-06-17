@@ -16,15 +16,14 @@
 class DailyProfile: public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(QString Day READ readDay NOTIFY DayChanged)
-    Q_PROPERTY(QString temp1 READ getTemp1 NOTIFY temp1Changed)
+    Q_PROPERTY(QString Day READ readDay WRITE setDay NOTIFY DayChanged)
+    //Q_PROPERTY(QString temp1 READ getTemp1 NOTIFY temp1Changed)
 
 
 public:
     enum SomeModelRoles {
-        DAY = Qt::UserRole+1,
-        TEMP,
-        TIME
+        TIME = Qt::UserRole+1,
+        TEMP
     };
 
     //Abstract model interface
@@ -36,19 +35,27 @@ protected:
     QVector<Submodel*> m_models;
     QHash<int, QByteArray> m_roles;
 
+
 public:
     DailyProfile(const QByteArray &array);
+    //DailyProfile(const QString someText);
     ~DailyProfile();
 
-    QString readDay();
     QVariant Profile();
     QByteArray retProfile();
     QString assignDay(int num);
    // EventsModel *getSchedule();
     QString getTemp1();
 
+    QString someText = "tomato";
 
-private:
+public slots:
+     QString readDay();
+     void setDay(QString newDay);
+
+
+
+
 Q_SIGNALS:
     void DayChanged();
     void temp1Changed();

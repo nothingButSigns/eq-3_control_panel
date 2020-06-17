@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
 
     d.startDeviceDiscovery();
 
+
         engine.rootContext()->setContextProperty("BLEdevice", &d);
 
     engine.load(url);
