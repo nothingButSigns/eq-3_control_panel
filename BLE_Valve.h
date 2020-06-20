@@ -19,7 +19,6 @@ Q_DECLARE_METATYPE (QList <QByteArray *>);
 class BLE_Valve: public QAbstractListModel
 {
 
-
     Q_OBJECT
     Q_PROPERTY(QString devName READ getName NOTIFY devChanged)
     Q_PROPERTY(QString devAddress READ getAddress NOTIFY devChanged)
@@ -36,7 +35,6 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;
-    QString text = "tomato";
 
 protected:
     QVector <DailyProfile*> m_models;
@@ -55,11 +53,8 @@ public:
     QString getAddress();
     void setCustomName(QString name);
 
-//    enum ProfileRequestState {
-//        ProcessingProfileData = 0,
-//        ReadyForMore
-//    } reqState;
-//    Q_ENUM(ProfileRequestState)
+    Q_INVOKABLE QVariant getModel(const int &index);
+
 
 public slots:
     void setTemperature(QString temperature);
@@ -92,8 +87,6 @@ public slots:
 Q_SIGNALS:
     void devChanged();
     void dailyProfileReceived();
-    void deviceCreated();
-
 
     friend class BLE_device;
 
@@ -110,7 +103,6 @@ private:
 protected:
     QList <QObject *> Services;
     QList <QObject *> Characteristics;
-    QList <DailyProfile *> dailyProfiles;
 
 
     BLE_Characteristic *eqCharacteristic = nullptr;

@@ -5,6 +5,7 @@
 #include "BLE_device.h"
 #include "BLE_Valve.h"
 
+
 int main(int argc, char *argv[])
 {
     //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

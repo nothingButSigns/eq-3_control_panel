@@ -9,15 +9,16 @@
 #include <QMetaType>
 ///#include "eventsmodel.h"
 #include <QAbstractListModel>
-#include <submodel.h>
+#include <event.h>
 
-
+#define QT_NO_CAST_TO_ASCII
 
 class DailyProfile: public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString Day READ readDay WRITE setDay NOTIFY DayChanged)
     //Q_PROPERTY(QString temp1 READ getTemp1 NOTIFY temp1Changed)
+
 
 
 public:
@@ -32,7 +33,7 @@ public:
     QHash<int, QByteArray> roleNames() const;
 
 protected:
-    QVector<Submodel*> m_models;
+    QVector<Event*> events;
     QHash<int, QByteArray> m_roles;
 
 
@@ -41,13 +42,9 @@ public:
     //DailyProfile(const QString someText);
     ~DailyProfile();
 
-    QVariant Profile();
     QByteArray retProfile();
     QString assignDay(int num);
    // EventsModel *getSchedule();
-    QString getTemp1();
-
-    QString someText = "tomato";
 
 public slots:
      QString readDay();
@@ -64,10 +61,6 @@ Q_SIGNALS:
 private:
     QByteArray *profile;
     QString day;
-    QMap <QString, QString> events;
-    QMap <QString, QString> example;
-    //EventsModel evModel;
-    QString m_temp1;
 };
 
 #endif // DAILY_PROFILE_H

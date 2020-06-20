@@ -30,13 +30,6 @@ QHash<int, QByteArray> BLE_Valve::roleNames() const
 BLE_Valve::BLE_Valve(const QBluetoothDeviceInfo &d)
 {
     BtDevice = d;
-      //  emit deviceCreated();
-
-
-//    m_models.append(new DailyProfile("MOnday"));
-//        m_models.append(new DailyProfile("Tuesday"));
-//            m_models.append(new DailyProfile("Wednesday"));
-//                m_models.append(new DailyProfile("Thursday"));
 }
 
 BLE_Valve::~BLE_Valve()
@@ -69,6 +62,12 @@ QString BLE_Valve::getAddress()
 void BLE_Valve::setCustomName(QString name)
 {
     customName = name;
+}
+
+QVariant BLE_Valve::getModel(const int &index)
+{
+    qDebug() << "inside getModel";
+    return QVariant::fromValue(m_models.at(index));
 }
 
 void BLE_Valve::setTemperature(QString temperature)
@@ -316,10 +315,7 @@ void BLE_Valve::getDailyProfileResponse(const QLowEnergyCharacteristic &info, co
 
     m_models.append(ptr);
     endInsertRows();
-   // dataChanged(index(m_models.size()-1), index(m_models.size()-1), QVector<int>()<<DAY);
 
-
-    //m_models.append(ptr);
     QString result = value.toHex();
     result += QLatin1Char('\n');
 

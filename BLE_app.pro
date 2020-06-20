@@ -20,8 +20,8 @@ SOURCES += \
         BLE_Valve.cpp \
         BLE_device.cpp \
         DailyProfile.cpp \
-        main.cpp \
-        submodel.cpp
+        event.cpp \
+        main.cpp
 
 RESOURCES += qml.qrc
 
@@ -43,4 +43,4 @@ HEADERS += \
     BLE_device.h \
     DailyProfile.h \
     eq-3.h \
-    submodel.h
+    event.h

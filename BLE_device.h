@@ -23,10 +23,6 @@ class BLE_device: public QAbstractListModel
     Q_PROPERTY(QVariant foundValves READ getFoundValves NOTIFY valvesDiscovered)
     Q_PROPERTY(QString state READ getState WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(quint8 characteristicsAmount READ getCharAmount WRITE updateCharAmount NOTIFY characteristicsUpdated)
-    //Q_PROPERTY(QVariant dailyProfiles READ getDailyProfiles NOTIFY dailyProfilesFound)
-    Q_PROPERTY(QVariant Profile READ getProfile NOTIFY newProfile)
-
-
 
 public:
     BLE_device();
@@ -36,13 +32,10 @@ public:
     QVariant getCharacteristics();
     QVariant getFoundValves();
     quint8 getCharAmount(); //to know if all characteristics has been found and enable communicating with a valve if so
-    QVariant getDailyProfiles();
-    QVariant getProfile();
 
     ///////// QAbstract model interface
     enum SOmeModelRoles {
-        CONNECTEDDEVICE = Qt::UserRole+1,
-        SOMETEXT
+        CONNECTEDDEVICE = Qt::UserRole+1
     };
 
     int rowCount(const QModelIndex &parent) const;
@@ -99,9 +92,6 @@ Q_SIGNALS:
     void stateChanged();
     void reducedChanged();
     void comfortChanged();
-    void dailyProfilesFound();
-    void newProfile();
-
 
 private:
     void setState(const QString &new_state);

@@ -1,22 +1,18 @@
 #ifndef SUBMODEL_H
 #define SUBMODEL_H
 
-#include <QAbstractListModel>
+#include <QObject>
 
 
-class Submodel: public QAbstractListModel
+class Event: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString temp READ temp WRITE setTemp NOTIFY tempChanged)
     Q_PROPERTY(QString time READ time WRITE setTime NOTIFY timeChanged)
 public:
-    Submodel(QString temp, QString time);
-    ~Submodel();
+    Event(QString temp, QString time);
+    ~Event();
 
-    enum SubModelRoles {
-        TEMP = Qt::UserRole + 1,
-        TIME
-    };
 
     QString temp();
     QString time();
@@ -30,13 +26,12 @@ Q_SIGNALS:
     void timeChanged();
 
 
-public:
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QHash<int, QByteArray> roleNames() const;
+//public:
+//    int rowCount(const QModelIndex &parent) const;
+//    QVariant data(const QModelIndex &index, int role) const;
+//    QHash<int, QByteArray> roleNames() const;
 
 protected:
-    QHash<int, QByteArray> m_roles;
     QString m_temp;
     QString m_time;
 };

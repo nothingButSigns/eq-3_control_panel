@@ -2,7 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs.qml 1.0
 
-//import Schedule 1.0
+
+
 
 Rectangle {
     id: settingsPage
@@ -23,13 +24,6 @@ Rectangle {
     visible: true
 
 
-//    Connections {
-//        target: BLEdevice.CONNECTEDDEVICE
-//        ondataChanged {
-//            day.text: Day
-//        }
-//    }
-
     Text {
         id: element
         x: 38
@@ -37,16 +31,14 @@ Rectangle {
         height: 22
         text: qsTr("Existing profiles:")
         font.pixelSize: 20
-
-
     }
 
 
-
     ListView {
+        id: mainList
         model: BLEdevice
-        width: parent.width/2
-        height: 0.7 * parent.height
+        width: parent.width
+        height: parent.height
 
 
         delegate: Component {
@@ -55,9 +47,8 @@ Rectangle {
                     id: topList
                     x: 8
                     y: 55
-                    height: 300
-                    implicitHeight: 250
-                    implicitWidth: 250
+                    height: 250
+                    width: 500
                     clip: true
                     spacing: 10
 
@@ -66,12 +57,16 @@ Rectangle {
 
 
                     delegate: Component {
+
+
+
                         Rectangle {
                             id: rectangle
-                            width: parent.width
+                            width: parent.width/2
                             height: 25
                             radius: 5
                             border.width: 2
+
 
                             Text {
                                 id: day
@@ -89,53 +84,40 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: day
                                 anchors.centerIn: day
+                                onClicked: {
+                                    scheduleList.scheduleModel = ConnectedDevice.getModel(index)
+                                    scheduleList.visible = true
+                                    console.log("Signal received " + index)
+                                }
 
                             }
 
 
-                            //            ListView {
-                            //                id: schedule
-                            //                x: 360
-                            //                y: 91
-                            //                width: 253
-                            //                height: 278
-                            //                visible: false
-                            //                model: dailyProfile
 
-
-                            //                delegate: Rectangle {
-                            //                    id: event
-                            //                    width: parent.width
-                            //                    height: 25
-
-
-                            //                    Label {
-                            //                        id: tempLab
-                            //                        width: 100
-                            //                        text: Time
-                            //                        font.pixelSize: 15
-                            //                    }
-
-                            //                    Label {
-                            //                        id: timeLab
-                            //                        width: 100
-                            //                        text: Temperature
-                            //                        anchors.left: timeLab.right
-                            //                        anchors.leftMargin: 0
-                            //                        font.pixelSize: 15
-                            //                    }
-
-                            //                }
-
-                            //            }
 
                         }
                     }
+
+
 
                 }
             }
         }
     }
+
+    Schedule {
+        id: scheduleList
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        visible: false
+
+
+        // anchors.top: topList.top
+       // anchors.topMargin: 0
+    }
+
+
 
     Button {
         id: button
@@ -147,16 +129,6 @@ Rectangle {
             pageLoader.source = "main.qml"
             pageLoader.source = ""
         }
-    }
-
-    Text {
-        id: element1
-        x: 436
-        y: 140
-        width: 123
-        height: 21
-        font.pixelSize: 12
-        visible: false
     }
 
 }

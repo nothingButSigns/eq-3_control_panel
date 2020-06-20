@@ -118,7 +118,6 @@ void BLE_device::connectToDevice(QString address)
     connect(LEcontroller, &QLowEnergyController::discoveryFinished, this, &BLE_device::addCharacteristics);
     connect(this, &BLE_device::nextCharacteristic, this, &BLE_device::addCharacteristics);
     //connect(this, &BLE_device::characteristicFound, connectedDevice, &BLE_Valve::setTemperature);
-        connect(connectedDevice, &BLE_Valve::deviceCreated, this, &BLE_device::askForDailyProfiles);
 
     LEcontroller->setRemoteAddressType(QLowEnergyController::PublicAddress);
     qDebug() << "connecting to device";
@@ -286,16 +285,6 @@ quint8 BLE_device::getCharAmount()
     return charAmount;
 }
 
-QVariant BLE_device::getDailyProfiles()
-{
-    return QVariant::fromValue(connectedDevice->dailyProfiles);
-}
-
-QVariant BLE_device::getProfile()
-{
-    DailyProfile *ptr = qobject_cast<DailyProfile *>(connectedDevice->dailyProfiles.last());
-    return QVariant::fromValue(ptr->Profile());
-}
 
 int BLE_device::rowCount(const QModelIndex &parent) const
 {
@@ -309,8 +298,6 @@ QVariant BLE_device::data(const QModelIndex &index, int role) const
 
     if(role == CONNECTEDDEVICE)
         return QVariant::fromValue(connectedDevice);
-    else if (role == SOMETEXT)
-        return connectedDevice->text;
 
     return QVariant();
 }
@@ -319,7 +306,6 @@ QHash<int, QByteArray> BLE_device::roleNames() const
 {
     QHash <int, QByteArray> roles;
     roles[CONNECTEDDEVICE] = "ConnectedDevice";
-    roles[SOMETEXT] = "someText";
 
     return roles;
 }
@@ -456,6 +442,9 @@ void BLE_device::askForDailyProfiles()
 {
     qDebug() << "inside askFor...";
 
+    if (connectedDevice->m_models.size() >= 7)
+        return;
+
     BLE_Characteristic *bch = nullptr;
 
     for (auto ch : connectedDevice->Characteristics)
@@ -479,7 +468,7 @@ void BLE_device::askForDailyProfiles()
         }
 
         connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicChanged, connectedDevice, &BLE_Valve::getDailyProfileResponse);
-        connect(connectedDevice, &BLE_Valve::dailyProfileReceived, this, &BLE_device::dailyProfilesFound);
+        //connect(connectedDevice, &BLE_Valve::dailyProfileReceived, this, &BLE_device::dailyProfilesFound);
         connect(connectedDevice, &BLE_Valve::dailyProfileReceived, this, &BLE_device::askForNextProfile);
 
 
@@ -493,12 +482,8 @@ void BLE_device::askForNextProfile()
 {
     qDebug() << "inside 'askForNextProfile'";
 
-    if (connectedDevice->dailyProfiles.size() == 7)
-    {
-        emit dailyProfilesFound();
+    if (connectedDevice->m_models.size() >= 7)
         return;
-    }
-
 
     ++day;
     connectedDevice->askForDailyProfiles(day);

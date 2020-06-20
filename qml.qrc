@@ -18,5 +18,6 @@
         <file>Hours.qml</file>
         <file>EndDateDialog.qml</file>
         <file>DailyProfiles.qml</file>
+        <file>Schedule.qml</file>
     </qresource>
 </RCC>

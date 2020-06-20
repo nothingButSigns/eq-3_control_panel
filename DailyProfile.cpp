@@ -3,7 +3,7 @@
 int DailyProfile::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return m_models.count();
+    return events.count();
 }
 
 QVariant DailyProfile::data(const QModelIndex &index, int role) const
@@ -12,9 +12,9 @@ QVariant DailyProfile::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == TEMP)
-        return m_models.at(index.row())->temp();
+        return events.at(index.row())->temp();
     else if (role == TIME)
-        return m_models.at(index.row())->time();
+        return events.at(index.row())->time();
 
     return QVariant();
 
@@ -58,15 +58,16 @@ DailyProfile::DailyProfile(const QByteArray &array)
         QString temperature = "";
         int intTemp = static_cast<int>(abs(temp));
         int remTemp = static_cast<int>((temp - abs(temp)) * 100);
-        temperature.append(static_cast<QChar>(intTemp));
+
+        temperature += QString::number(intTemp);
         temperature.append(".");
-        temperature.append(static_cast<QChar>(remTemp));
+        temperature += QString::number(remTemp);
 
         //increment the iterator to get access to end time for a given event
         ++_begin;
 
         float minutes = static_cast<float>(*_begin);
-        // retrived value is equal to ammount of 10-minutes intervals since 00:00
+        // retrived value is equal to amount of 10-minutes intervals since 00:00
         minutes *= 10;
         minutes /= 60;
         int hour = static_cast<int>(abs(minutes));
@@ -76,15 +77,16 @@ DailyProfile::DailyProfile(const QByteArray &array)
         // append 0 at the beggining to get a proper time format (e.g. 01:00)
         if(hour < 10) time.append("0");
 
-        time.append(static_cast<QChar>(hour));
+        time += QString::number(hour);
         time.append(":");
 
         // similarly, add '0' to get proper time format
         if(mins < 10) time.append("0");
-        time.append(static_cast<QChar>(mins));
+        time += QString::number(mins);
 
-
-        events[time] = temperature;
+        beginInsertRows(QModelIndex(), events.size(), events.size());
+        events.append(new Event(temperature, time));
+        endInsertRows();
 
 //        m_temp1 = "22.0";
 
@@ -99,10 +101,6 @@ DailyProfile::DailyProfile(const QByteArray &array)
     }
 }
 
-//DailyProfile::DailyProfile(const QString someText)
-//{
-//    day = someText;
-//}
 
 DailyProfile::~DailyProfile(){}
 
@@ -116,15 +114,6 @@ void DailyProfile::setDay(QString newDay)
     day = newDay;
 }
 
-QVariant DailyProfile::Profile()
-{
-
-    example["one"] = "23";
-    example["two"] = "26";
-
-    return QVariant::fromValue(example);
-}
-
 QByteArray DailyProfile::retProfile()
 {
     return *profile;
@@ -134,10 +123,4 @@ QString DailyProfile::assignDay(int num)
 {
     QList<QString> days {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
     return days.at(num);
-}
-
-
-QString DailyProfile::getTemp1()
-{
-    return m_temp1;
 }
