@@ -24,7 +24,8 @@ class DailyProfile: public QAbstractListModel
 public:
     enum SomeModelRoles {
         TIME = Qt::UserRole+1,
-        TEMP
+        TEMP,
+        TIME_PREV
     };
 
     //Abstract model interface
@@ -44,7 +45,6 @@ public:
 
     QByteArray retProfile();
     QString assignDay(int num);
-   // EventsModel *getSchedule();
 
 public slots:
      QString readDay();

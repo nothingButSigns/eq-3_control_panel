@@ -64,12 +64,6 @@ void BLE_Valve::setCustomName(QString name)
     customName = name;
 }
 
-QVariant BLE_Valve::getModel(const int &index)
-{
-    qDebug() << "inside getModel";
-    return QVariant::fromValue(m_models.at(index));
-}
-
 void BLE_Valve::setTemperature(QString temperature)
 {
     qDebug() << "Inside 'writeCHaracteristic'";

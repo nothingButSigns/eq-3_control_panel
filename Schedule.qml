@@ -12,12 +12,6 @@ Item {
     implicitHeight: 278
 
     ListView {
-        id: listS
-
-       // x: 360
-       // y: 91
-        //anchors.left: archLeft
-        //anchors.leftMargin: archLeftMar
         height: parent.height
         width: parent.width
         anchors.fill: parent
@@ -26,41 +20,38 @@ Item {
         spacing: 5
         model: scheduleModel
 
-        delegate: schDel
+        delegate: Component {
+            id: schDel
+            Rectangle {
+                id: event
+                width: parent.width
+                height: 20
+
+                Label {
+                    id: tempLab1
+                    width: 100
+                    text: prevTime + " - " + Time
+                    font.pixelSize: 15
+                }
+
+                Label {
+                    id: timeLab2
+                    width: 100
+                    text: Temperature
+                    anchors.left: tempLab1.right
+                    anchors.leftMargin: 0
+                    font.pixelSize: 15
+                }
 
 
-
-        //onCurrentIndexChanged: console.log(currentIndex + 'selected')
-
-    }
-
-
-    Component {
-        id: schDel
-        Rectangle {
-            id: event
-            width: parent.width
-            height: 20
-
-            Label {
-                id: tempLab1
-                width: 100
-                text: Time
-                font.pixelSize: 15
             }
-
-            Label {
-                id: timeLab2
-                width: 100
-                text: Temperature
-                anchors.left: tempLab1.right
-                anchors.leftMargin: 0
-                font.pixelSize: 15
-            }
-
-
         }
+
+
     }
+
+
+
 }
 
 

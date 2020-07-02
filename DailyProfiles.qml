@@ -84,17 +84,8 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: day
                                 anchors.centerIn: day
-                                onClicked: {
-                                    scheduleList.scheduleModel = ConnectedDevice.getModel(index)
-                                    scheduleList.visible = true
-                                    console.log("Signal received " + index)
-                                }
-
+                                onClicked: scheduleList.scheduleModel = dailyProfile
                             }
-
-
-
-
                         }
                     }
 
@@ -110,11 +101,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 20
-        visible: false
 
-
-        // anchors.top: topList.top
-       // anchors.topMargin: 0
     }
 
 
@@ -131,4 +118,19 @@ Rectangle {
         }
     }
 
+    Button {
+        id: dialogBtn
+        anchors.verticalCenter: button
+        anchors.left: button.right
+        anchors.leftMargin: 200
+        text: qsTr("Edit daily profile")
+        onClicked: profileDial.open()
+    }
+
+    DailyProfileDialog {
+        id: profileDial
+        width: parent.width
+        height: parent.height
+
+}
 }

@@ -22,6 +22,9 @@ BLE_device::BLE_device()
     connect(this, &BLE_device::serviceAdded, this, &BLE_device::addCharacteristics);
 
 
+    beginInsertRows(QModelIndex(), userProfiles.size(), userProfiles.size());
+    userProfiles.append(new Event("17.0", "00:00"));
+    endInsertRows();
 
 }
 
@@ -288,7 +291,8 @@ quint8 BLE_device::getCharAmount()
 
 int BLE_device::rowCount(const QModelIndex &parent) const
 {
-    return 1;
+    return userProfiles.size();
+
 }
 
 QVariant BLE_device::data(const QModelIndex &index, int role) const
@@ -298,6 +302,24 @@ QVariant BLE_device::data(const QModelIndex &index, int role) const
 
     if(role == CONNECTEDDEVICE)
         return QVariant::fromValue(connectedDevice);
+    else if (role == USERSPROFILE)
+        return QVariant::fromValue(userProfiles);
+    else if (role == PROFILETEMP)
+        return QVariant::fromValue(userProfiles.at(index.row())->temp());
+    else if (role == PROFILEHOURSfrom)
+    {
+        if (!index.row())
+            return "00";
+        else
+            return QVariant::fromValue(userProfiles.at(index.row()-1)->hour());
+    }
+    else if (role == PROFILEMINSfrom)
+    {
+        if (!index.row())
+            return "00";
+        else
+            return QVariant::fromValue(userProfiles.at(index.row()-1)->mins());
+    }
 
     return QVariant();
 }
@@ -306,6 +328,10 @@ QHash<int, QByteArray> BLE_device::roleNames() const
 {
     QHash <int, QByteArray> roles;
     roles[CONNECTEDDEVICE] = "ConnectedDevice";
+    roles[USERSPROFILE] = "usersProfile";
+    roles[PROFILETEMP] = "profileTemp";
+    roles[PROFILEHOURSfrom] = "profileHourFrom";
+    roles[PROFILEMINSfrom] = "profileMinsFrom";
 
     return roles;
 }
@@ -476,6 +502,41 @@ void BLE_device::askForDailyProfiles()
 
     }
 
+}
+
+void BLE_device::createNewEvent()
+{
+    // only 7 events can be defined
+    if (userProfiles.size() >= 7)
+        return;
+
+    QString defaultTime = "00:00";
+    QString defaultTemp = "17.0";
+
+    beginInsertRows(QModelIndex(), userProfiles.size(), userProfiles.size());
+    userProfiles.append(new Event("17.0", userProfiles.at(userProfiles.size())->getProfileTime()));
+    endInsertRows();
+}
+
+void BLE_device::removeLastEvent()
+{
+    if (userProfiles.size() <= 1)
+        return;
+
+    beginRemoveRows(QModelIndex(), userProfiles.size()-1, userProfiles.size()-1);
+    userProfiles.removeLast();
+    endRemoveRows();
+}
+
+void BLE_device::updateHour(int index, QString hour)
+{
+    qDebug() <<"inside updateHOur, index = " << index;
+    userProfiles.at(index)->setProfileHour(hour);
+}
+
+void BLE_device::updateMins(int index, QString mins)
+{
+    userProfiles.at(index)->setProfileMins(mins);
 }
 
 void BLE_device::askForNextProfile()

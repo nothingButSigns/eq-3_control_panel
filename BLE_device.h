@@ -35,7 +35,11 @@ public:
 
     ///////// QAbstract model interface
     enum SOmeModelRoles {
-        CONNECTEDDEVICE = Qt::UserRole+1
+        CONNECTEDDEVICE = Qt::UserRole+1,
+        USERSPROFILE,
+        PROFILEHOURSfrom,
+        PROFILEMINSfrom,
+        PROFILETEMP,
     };
 
     int rowCount(const QModelIndex &parent) const;
@@ -43,11 +47,17 @@ public:
     QHash<int, QByteArray> roleNames() const;
 
     Q_INVOKABLE void askForDailyProfiles();
+    Q_INVOKABLE void createNewEvent();
+    Q_INVOKABLE void removeLastEvent();
+    Q_INVOKABLE void updateHour(int index, QString hour);
+    Q_INVOKABLE void updateMins(int index, QString mins);
+
 
 
 protected:
     QHash<int, QByteArray> m_roles;
     BLE_Valve* connectedDevice;
+    QVector <Event *> userProfiles;
 
 
 public slots:

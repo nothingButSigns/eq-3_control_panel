@@ -2,6 +2,7 @@
 #define SUBMODEL_H
 
 #include <QObject>
+#include <QAbstractListModel>
 
 
 class Event: public QObject
@@ -13,27 +14,30 @@ public:
     Event(QString temp, QString time);
     ~Event();
 
-
     QString temp();
     QString time();
     void setTemp(QString temp);
     void setTime(QString time);
+    int hour();
+    QString mins();
+    void setProfileHour(QString hour);
+    void setProfileMins(QString mins);
+    QString getProfileTime();
 
-    //QAbstract model interface
+
 
 Q_SIGNALS:
     void tempChanged();
     void timeChanged();
 
-
-//public:
-//    int rowCount(const QModelIndex &parent) const;
-//    QVariant data(const QModelIndex &index, int role) const;
-//    QHash<int, QByteArray> roleNames() const;
-
+    
 protected:
     QString m_temp;
     QString m_time;
+    // End time of the profile event
+    QString profileHour;
+    QString profileMins;
+
 };
 
 #endif // SUBMODEL_H

@@ -19,5 +19,9 @@
         <file>EndDateDialog.qml</file>
         <file>DailyProfiles.qml</file>
         <file>Schedule.qml</file>
+        <file>DailyProfileDialog.qml</file>
+        <file>Weekdays.qml</file>
+        <file>DailyProfileRow.qml</file>
+        <file>Hours24.qml</file>
     </qresource>
 </RCC>

@@ -6,7 +6,7 @@ Dialog {
     id: holidayMode
     height: 350
     width: 350
-    title: "Set window mode"
+    title: "Set holiday mode"
 
     property string holidayTemp: ""
     property string holidayEndDate: ""

@@ -15,6 +15,13 @@ QVariant DailyProfile::data(const QModelIndex &index, int role) const
         return events.at(index.row())->temp();
     else if (role == TIME)
         return events.at(index.row())->time();
+    else if (role == TIME_PREV) {
+        if (index.row() == 0)
+            return "00:00";
+        else
+            return events.at(index.row()-1)->time();
+    }
+
 
     return QVariant();
 
@@ -25,6 +32,7 @@ QHash<int, QByteArray> DailyProfile::roleNames() const
     QHash <int, QByteArray> roles;
     roles[TIME] = "Time";
     roles[TEMP] = "Temperature";
+    roles[TIME_PREV] = "prevTime";
 
     return roles;
 }
@@ -32,6 +40,7 @@ QHash<int, QByteArray> DailyProfile::roleNames() const
 DailyProfile::DailyProfile(const QByteArray &array)
 {
     profile = new QByteArray(array);
+    events.clear();
 
     // retirive data from the array
     // get day of the week
@@ -66,7 +75,8 @@ DailyProfile::DailyProfile(const QByteArray &array)
         //increment the iterator to get access to end time for a given event
         ++_begin;
 
-        float minutes = static_cast<float>(*_begin);
+        quint8 minutesInt = static_cast<quint8>(*_begin);
+        float minutes = static_cast<float>(minutesInt);
         // retrived value is equal to amount of 10-minutes intervals since 00:00
         minutes *= 10;
         minutes /= 60;
@@ -83,6 +93,12 @@ DailyProfile::DailyProfile(const QByteArray &array)
         // similarly, add '0' to get proper time format
         if(mins < 10) time.append("0");
         time += QString::number(mins);
+
+        if (time == "24:00")
+            time = "00:00";
+
+        if (!events.isEmpty() && events.last()->time() == time)
+            return;
 
         beginInsertRows(QModelIndex(), events.size(), events.size());
         events.append(new Event(temperature, time));

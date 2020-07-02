@@ -23,7 +23,6 @@ class BLE_Valve: public QAbstractListModel
     Q_PROPERTY(QString devName READ getName NOTIFY devChanged)
     Q_PROPERTY(QString devAddress READ getAddress NOTIFY devChanged)
 
-
 public:
 
     ////AbstractLIstMOdel interface
@@ -40,7 +39,6 @@ protected:
     QVector <DailyProfile*> m_models;
     QHash<int, QByteArray> m_roles;
 
-
 public:
 
     BLE_Valve() = default; //the compiler creates constructor with no args even if other constructors are present
@@ -52,8 +50,6 @@ public:
     QString getName();
     QString getAddress();
     void setCustomName(QString name);
-
-    Q_INVOKABLE QVariant getModel(const int &index);
 
 
 public slots:
