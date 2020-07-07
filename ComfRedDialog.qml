@@ -21,7 +21,7 @@ Dialog {
             id: element
             height: parent.height/7
             width: parent.width/2.5
-            text: "Comfort temp. (C deg)"
+            text: "Comfort temp. [︒C]"
             anchors.left: parent.left
             anchors.leftMargin: (parent.width - width - fScope.width - fScope.anchors.leftMargin) / 2
 
@@ -121,13 +121,25 @@ Dialog {
             y: 7
             height: element.height
             width: element.width
-            text: "Reduced temp. (C deg)"
+            text: "Reduced temp. [︒C]"
             anchors.left: parent.left
             anchors.leftMargin: element.anchors.leftMargin
             anchors.topMargin: 25
             anchors.top: element.bottom
             font.pixelSize: 15
         }
+    }
+
+    Label {
+        id: warning
+        width: 300
+        height: 20
+        text: qsTr("Temperature must be in range 5 - 29,5︒C")
+        anchors.top: parent.top
+        anchors.topMargin: 120
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: "red"
+        visible: false
     }
 
     Button {
@@ -143,11 +155,16 @@ Dialog {
 
         KeyNavigation.tab: cancel
         onClicked: {
+            if(!newComf.acceptableInput || !newRed.acceptableInput)
+                warning.visible = true
+            else {
+
                 comfTemp = newComf.text
                 redTemp = newRed.text
 
                 BLEdevice.modifyComfortReducedTemp(comfTemp, redTemp)
                 comfTempDialog.close()
+            }
         }
 
     }
@@ -173,6 +190,6 @@ Dialog {
 
 /*##^##
 Designer {
-    D{i:2;anchors_x:21}D{i:7;anchors_x:"-9"}D{i:11;anchors_x:21}D{i:12;anchors_height:20;anchors_y:115}
+    D{i:2;anchors_x:21}D{i:7;anchors_x:"-9"}D{i:11;anchors_x:21}
 }
 ##^##*/

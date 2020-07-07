@@ -51,7 +51,8 @@ Dialog {
             id: element1
             width: 50
             height: 30
-            text: qsTr("deg C")
+            text: qsTr("︒C")
+            anchors.verticalCenterOffset: -5
             anchors.verticalCenter: tempValue.verticalCenter
             anchors.left: tempValue.right
             anchors.leftMargin: 0

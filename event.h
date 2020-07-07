@@ -8,21 +8,24 @@
 class Event: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString temp READ temp WRITE setTemp NOTIFY tempChanged)
-    Q_PROPERTY(QString time READ time WRITE setTime NOTIFY timeChanged)
+//    Q_PROPERTY(QString temp READ temp WRITE setTemp NOTIFY tempChanged)
+//    Q_PROPERTY(QString time READ time WRITE setTime NOTIFY timeChanged)
+
 public:
-    Event(QString temp, QString time);
+    Event (QString temp, QString time);
+    Event (QString temp);
     ~Event();
 
     QString temp();
     QString time();
     void setTemp(QString temp);
+    void setTemp(float temp);
     void setTime(QString time);
-    int hour();
-    QString mins();
+    QString getProfileHour();
+    QString getProfileMins();
     void setProfileHour(QString hour);
     void setProfileMins(QString mins);
-    QString getProfileTime();
+    QString getTemp();
 
 
 
@@ -33,7 +36,7 @@ Q_SIGNALS:
     
 protected:
     QString m_temp;
-    QString m_time;
+    QString m_time = "00:00";
     // End time of the profile event
     QString profileHour;
     QString profileMins;

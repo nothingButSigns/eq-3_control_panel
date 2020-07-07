@@ -51,8 +51,6 @@ public:
     QString getAddress();
     void setCustomName(QString name);
 
-
-public slots:
     void setTemperature(QString temperature);
     void setAutoManual(bool mode);
     void lock(bool onOff);
@@ -65,6 +63,8 @@ public slots:
     void modifyWindowMode(const float windowTemp, const int durationTime);
     void setHolidayMode(const QString hTemp, const QTime hTime, const QString daytime, const QDate hDate);
     void askForDailyProfiles(int day);
+    void setNewDailyProfiles(const QString day, const QByteArray &data);
+    char weekdaysResolver(QString day);
 
     void getCharacteristicWritten(const QLowEnergyCharacteristic &info,
                                               const QByteArray &value);

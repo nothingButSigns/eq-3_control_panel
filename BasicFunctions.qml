@@ -6,45 +6,76 @@ Item {
     id: element
     property alias basicFunctions: grid
 
+    CustomRow {
+        id: tempSetting
+        spacing: 0
+        width: 600
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.top
+        anchors.bottomMargin: 170
+
+        Column {
+            id: temDescColumn
+            width: 180
+            height: parent.height
+
+            Description {
+                id: tempDesc
+                descText: "Change temperature"
+            }
+
+        }
+
+        Column {
+            id: newTempInput
+            height: parent.height * 2
+            anchors.left: parent.left
+            anchors.leftMargin: temDescColumn.width
+            width: 300
+            y: -10
+
+            TempSlider {
+                id: newTemp
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+            }
+
+        }
+
+        Column {
+            id: temDescColumn1
+            width: 100
+            height: parent.height
+            anchors.left: parent.left
+            anchors.leftMargin: 500
+
+            Button {
+                id: button
+                y: 50
+                height: 20
+                text: qsTr("Send")
+                onClicked: {
+                    BLEdevice.set_temp(newTemp.value)
+                }
+            }
+        }
+    }
+
     Grid {
         id: grid
         x: 0
         y: 0
         width: 400
-        height: 284
+        height: 240
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        rows: 6
+        rows: 5
         columns: 1
         spacing: 30
 
-        CustomRow {
-            id: tempSetting
-            spacing: 0
 
-            Column {
-                id: temDescColumn
-                height: parent.height
-                width: parent.width/2
-
-                Description {
-                    id: tempDesc
-                    descText: "Change temperature"
-                }
-
-            }
-
-            Column {
-                id: newTempInput
-                height: parent.height * 2
-                width: parent.width/2
-
-                TxtSetting {
-                    id: newTemp
-                }
-
-            }
-        }
 
         CustomRow {
             id: mode
@@ -53,6 +84,8 @@ Item {
             Column {
                 id: modeDescColumn
                 height: parent.height*2
+                anchors.top: parent.top
+                anchors.topMargin: 10
                 width: parent.width/2
 
                 Description {
@@ -71,7 +104,7 @@ Item {
                     id: switchAutoManual
                     modeSwitchTop.text: "Manual"
                     anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    anchors.rightMargin: -40
                     modeSwitchTop.onToggled: {
                         if (modeSwitchTop.checked == true)
                             BLEdevice.setAutoManual(true)
@@ -91,6 +124,8 @@ Item {
             Column {
                 id: lockDescColumn
                 height: parent.height
+                anchors.top: parent.top
+                anchors.topMargin: 10
                 width: parent.width/2
 
                 Description {
@@ -107,7 +142,7 @@ Item {
                 SwitchMode {
                     id: switchLockUnlock
                     anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    anchors.rightMargin: -40
                     modeSwitchTop.text: modeSwitchTop.checked? 'Locked' : 'Unlocked'
                     modeSwitchTop.onToggled: {
                         if (modeSwitchTop.checked == true)
@@ -126,6 +161,8 @@ Item {
             Column {
                 id: reducedTempColumn
                 height: parent.height
+                anchors.top: parent.top
+                anchors.topMargin: 10
                 width: parent.width/2
 
                 Description {
@@ -162,6 +199,8 @@ Item {
             Column {
                 id: comfortTempColumn
                 height: parent.height
+                anchors.top: parent.top
+                anchors.topMargin: 10
                 width: parent.width/2
 
                 Description {
@@ -198,6 +237,8 @@ Item {
             Column {
                 id: boostDescColumn
                 height: parent.height
+                anchors.top: parent.top
+                anchors.topMargin: 10
                 width: parent.width/2
 
                 Description {

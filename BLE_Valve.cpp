@@ -70,11 +70,11 @@ void BLE_Valve::setTemperature(QString temperature)
 
 
 
-    int tempInt = temperature.toInt();
+    int tempInt = static_cast<int>(2 * temperature.toFloat());
     QByteArray value;
     value.resize(2);
     value[0] = SET_TEMP;
-    value[1] = 2 * static_cast<char>(tempInt);
+    value[1] = static_cast<char>(tempInt);
     eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
 
 }
@@ -341,5 +341,30 @@ void BLE_Valve::askForDailyProfiles(int day)
     value[0] = READ_PROFILE;
     value[1] = static_cast<char>(day);
 
-        eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
+    eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
+}
+
+void BLE_Valve::setNewDailyProfiles(const QString day, const QByteArray &data)
+{
+    QByteArray dataToBeSend;
+
+    dataToBeSend.append(CREATE_PROFILE);
+    dataToBeSend.append(weekdaysResolver(day));
+    dataToBeSend += data;
+
+    eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), dataToBeSend);
+
+
+}
+
+char BLE_Valve::weekdaysResolver(QString day)
+{
+    char index = 0;
+
+    QVector <QString> days = {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+
+    auto it = std::find(days.begin(), days.end(), day);
+    index = static_cast<char>(std::distance(days.begin(), it));
+
+    return index;
 }

@@ -1,9 +1,15 @@
 #include "event.h"
 
+
 Event::Event(QString temp, QString time)
 {
     m_temp = temp;
     m_time = time;
+}
+
+Event::Event(QString temp)
+{
+    m_temp = temp;
 }
 
 Event::~Event()
@@ -21,12 +27,12 @@ QString Event::time()
     return m_time;
 }
 
-int Event::hour()
+QString Event::getProfileHour()
 {
-    return profileHour.toInt();
+    return profileHour;
 }
 
-QString Event::mins()
+QString Event::getProfileMins()
 {
     return profileMins;
 }
@@ -41,14 +47,19 @@ void Event::setProfileMins(QString mins)
     profileMins = mins;
 }
 
-QString Event::getProfileTime()
+QString Event::getTemp()
 {
-    return profileHour + ":" + profileMins;
+    return m_temp;
 }
 
 void Event::setTemp(QString temp)
 {
     m_temp = temp;
+}
+
+void Event::setTemp(float temp)
+{
+    //m_temp =
 }
 
 void Event::setTime(QString time)

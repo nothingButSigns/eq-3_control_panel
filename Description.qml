@@ -10,6 +10,8 @@ Rectangle {
         //anchors.left: parent
        // anchors.leftMargin: 0
         text: descText
+        verticalAlignment: Text.AlignVCenter
+        font.bold: true
         //wrapMode: Text.WordWrap
     }
 

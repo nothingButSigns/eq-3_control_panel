@@ -17,13 +17,13 @@ BLE_device::BLE_device()
             &BLE_device::deviceDiscovered);
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this,
             &BLE_device::discoveryFinished);
-//    connect(this, &BLE_device::startConnecting, this, &BLE_device::connectToDevice);
+    //    connect(this, &BLE_device::startConnecting, this, &BLE_device::connectToDevice);
     connect(LEcontroller, &QLowEnergyController::connected, this, &BLE_device::deviceConnected);
     connect(this, &BLE_device::serviceAdded, this, &BLE_device::addCharacteristics);
 
 
     beginInsertRows(QModelIndex(), userProfiles.size(), userProfiles.size());
-    userProfiles.append(new Event("17.0", "00:00"));
+    userProfiles.append(new Event("17.0"));
     endInsertRows();
 
 }
@@ -41,7 +41,7 @@ QString BLE_device::getState()
 
 void BLE_device::startDeviceDiscovery()
 {
-     discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
+    discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
 }
 
 void BLE_device::addDevice(const QBluetoothDeviceInfo &device)
@@ -55,11 +55,11 @@ void BLE_device::addDevice(const QBluetoothDeviceInfo &device)
         // determine what type of BLE device was found (a radiator valve or a lightbulb)
         if (letter[0] == 'B')
         {
-            Lightbulbs.append(element);
+            Valves.append(element);
         }
         else if (letter[0] == 'C')
         {
-            Valves.append(element);
+            Lightbulbs.append(element);
         }
 
         qDebug() << "Device " << letter[0] <<" added";
@@ -76,7 +76,7 @@ void BLE_device::deviceDiscovered(const QBluetoothDeviceInfo &device)
 void BLE_device::discoveryFinished()
 {
     qDebug() << "Scan finished!";
-   // emit startConnecting();
+    // emit startConnecting();
 }
 
 void BLE_device::deviceConnected()
@@ -141,8 +141,8 @@ void BLE_device::addService(const QBluetoothUuid &uuid)
         qDebug() << "EQ-3 control service has been found";
 
     }
-  //  QLowEnergyCharacteristic QLEch = serv->characteristic(uuid);
-  /*  qDebug() << "Name: " << serv->characteristics().at(0).name();
+    //  QLowEnergyCharacteristic QLEch = serv->characteristic(uuid);
+    /*  qDebug() << "Name: " << serv->characteristics().at(0).name();
         qDebug() << "Name: " << serv->characteristics().at(0).properties();
             qDebug() << "Name: " << serv->characteristics().at(0).handle();*/
 
@@ -155,16 +155,16 @@ void BLE_device::addCharacteristics()
     QLowEnergyService * service = nullptr;
     if (serviceIndex >= connectedDevice->Services.size())
     {
-       // emit characteristicFound("14");
+        // emit characteristicFound("14");
         return;
     }
 
-        BLE_Service *ble_s = qobject_cast <BLE_Service *> (connectedDevice->Services.at(serviceIndex));
-        service = ble_s->getService();
+    BLE_Service *ble_s = qobject_cast <BLE_Service *> (connectedDevice->Services.at(serviceIndex));
+    service = ble_s->getService();
 
-//    qDebug() << "Service: " << service->serviceName();
-//    qDebug() << "Service UUID: " << service->serviceUuid();
-//    qDebug() << "State: " << service->state();
+    //    qDebug() << "Service: " << service->serviceName();
+    //    qDebug() << "Service UUID: " << service->serviceUuid();
+    //    qDebug() << "State: " << service->state();
 
     if (service->state() == QLowEnergyService::DiscoveryRequired)
     {
@@ -177,7 +177,7 @@ void BLE_device::addCharacteristics()
     for (auto ch : LE_ch)
     {
         BLE_Characteristic *c = new BLE_Characteristic(ch);
-  /*      qDebug() << "Name: " << ch.name();
+        /*      qDebug() << "Name: " << ch.name();
         qDebug() << "Properties: " << ch.properties();
         qDebug() << "Handler: " << ch.handle();
                 qDebug() << "UUID: " << ch.uuid();
@@ -199,7 +199,7 @@ void BLE_device::addCharacteristics()
 
     qDebug() << "Characteristics amount: " << connectedDevice->Characteristics.size();
 
-//    if (connectedDevice->Characteristics.size() == 8) emit characteristicFound();
+    //    if (connectedDevice->Characteristics.size() == 8) emit characteristicFound();
 
     QTimer::singleShot(0, this, &BLE_device::characteristicsUpdated);
 
@@ -245,7 +245,7 @@ void BLE_device::discoverServiceDetails(QLowEnergyService::ServiceState sState)
 
         connectedDevice->Characteristics.append(c);
 
- /*       qDebug() << "Name: " << ch.name();
+        /*       qDebug() << "Name: " << ch.name();
         qDebug() << "Properties: " << ch.properties();
         qDebug() << "Handler: " << ch.handle();
                 qDebug() << "UUID: " << ch.uuid();
@@ -267,7 +267,7 @@ void BLE_device::discoverServiceDetails(QLowEnergyService::ServiceState sState)
         emit characteristicsUpdated();
     }
 
-        qDebug() << "Characteristics amount: " << connectedDevice->Characteristics.size();
+    qDebug() << "Characteristics amount: " << connectedDevice->Characteristics.size();
     serviceIndex++;
     emit nextCharacteristic();
 
@@ -311,14 +311,14 @@ QVariant BLE_device::data(const QModelIndex &index, int role) const
         if (!index.row())
             return "00";
         else
-            return QVariant::fromValue(userProfiles.at(index.row()-1)->hour());
+            return QVariant::fromValue(userProfiles.at(index.row()-1)->getProfileHour());
     }
     else if (role == PROFILEMINSfrom)
     {
         if (!index.row())
             return "00";
         else
-            return QVariant::fromValue(userProfiles.at(index.row()-1)->mins());
+            return QVariant::fromValue(userProfiles.at(index.row()-1)->getProfileMins());
     }
 
     return QVariant();
@@ -351,7 +351,7 @@ BLE_Valve *BLE_device::getDevice()
 
 
 void BLE_device::getCharacteristicValue(const QLowEnergyCharacteristic &char_info,
-                            const QByteArray &char_value)
+                                        const QByteArray &char_value)
 {
     qDebug() << "Characteristics value: " << char_value;
     qDebug() << "Ch. UUID: " << char_info.uuid().toString();
@@ -419,8 +419,8 @@ void BLE_device::setDateTime(const QDate newDate, const QTime newTime)
 
 void BLE_device::modifyComfortReducedTemp(const QString &newComfort, const QString &newReduced)
 {
-    float comfTemp = newComfort.toFloat();
-    float redTemp = newReduced.toFloat();
+    double comfTemp = newComfort.toDouble();
+    double redTemp = newReduced.toDouble();
 
     if (comfTemp > (floor(comfTemp)+0.5)) comfTemp = floor(comfTemp) + 0.5;
     else comfTemp = floor(comfTemp);
@@ -432,7 +432,7 @@ void BLE_device::modifyComfortReducedTemp(const QString &newComfort, const QStri
     connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
             , &BLE_Valve::getComfortReducedModified);
 
-    connectedDevice->modifyComfortReducedTemp(comfTemp, redTemp);
+    connectedDevice->modifyComfortReducedTemp(static_cast<float>(comfTemp), static_cast<float>(redTemp));
 
 }
 
@@ -476,8 +476,8 @@ void BLE_device::askForDailyProfiles()
     for (auto ch : connectedDevice->Characteristics)
     {
         bch = qobject_cast <BLE_Characteristic *>(ch);
-            if (bch->getCharacteristic().uuid().toString() == NOTIFICATION)
-                    break;
+        if (bch->getCharacteristic().uuid().toString() == NOTIFICATION)
+            break;
     }
 
     if (bch)
@@ -498,24 +498,53 @@ void BLE_device::askForDailyProfiles()
         connect(connectedDevice, &BLE_Valve::dailyProfileReceived, this, &BLE_device::askForNextProfile);
 
 
-            connectedDevice->askForDailyProfiles(0);
+        connectedDevice->askForDailyProfiles(0);
 
     }
 
 }
 
-void BLE_device::createNewEvent()
+bool BLE_device::createNewEvent()
 {
     // only 7 events can be defined
     if (userProfiles.size() >= 7)
-        return;
+        return false;
 
-    QString defaultTime = "00:00";
-    QString defaultTemp = "17.0";
+    int lastHour, lastByOneHour, lastMin, lastByOneMin = 0;
 
-    beginInsertRows(QModelIndex(), userProfiles.size(), userProfiles.size());
-    userProfiles.append(new Event("17.0", userProfiles.at(userProfiles.size())->getProfileTime()));
-    endInsertRows();
+    if (userProfiles.size() >= 2) {
+
+        lastHour = userProfiles.last()->getProfileHour().toInt();
+        lastByOneHour = userProfiles.at(userProfiles.size()-2)->getProfileHour().toInt();
+        lastMin = userProfiles.last()->getProfileMins().toInt();
+        lastByOneMin = userProfiles.at(userProfiles.size()-2)->getProfileMins().toInt();
+
+        // check, wether last insterted time is greater than the previous one
+        if ((lastHour <= lastByOneHour) && (lastMin <= lastByOneMin))
+            return false;
+        else {
+            beginInsertRows(QModelIndex(), userProfiles.size(), userProfiles.size());
+            userProfiles.append(new Event("17.0"));
+            endInsertRows();
+        }
+    }
+
+    else {
+
+        lastHour = userProfiles.at(0)->getProfileHour().toInt();
+        lastMin = userProfiles.at(0)->getProfileMins().toInt();
+
+        if (!lastHour && !lastMin)
+            return false;
+        else {
+            beginInsertRows(QModelIndex(), userProfiles.size(), userProfiles.size());
+            userProfiles.append(new Event("17.0"));
+            endInsertRows();
+        }
+    }
+
+    return true;
+
 }
 
 void BLE_device::removeLastEvent()
@@ -537,6 +566,38 @@ void BLE_device::updateHour(int index, QString hour)
 void BLE_device::updateMins(int index, QString mins)
 {
     userProfiles.at(index)->setProfileMins(mins);
+}
+
+void BLE_device::updateTemp(int index, float temp)
+{
+    userProfiles.at(index)->setTemp(temp);
+}
+
+void BLE_device::setNewDailyProfiles(QString day)
+{
+    QByteArray profilesData;
+    char data;
+
+    for(auto i: userProfiles)
+    {
+
+        data = static_cast<char>(2 * i->getTemp().toFloat());
+        profilesData.append(data);
+        data = static_cast<char>(i->getProfileHour().toInt() * 6 + i->getProfileMins().toInt()/10);
+        profilesData.append(data);
+    }
+
+    if (userProfiles.size() < 7)
+    {
+        for (int i = 0; i< 2 * (7 - userProfiles.size()); i++)
+        {
+            profilesData.append("0");
+        }
+    }
+
+    connectedDevice->setNewDailyProfiles(day, profilesData);
+
+
 }
 
 void BLE_device::askForNextProfile()

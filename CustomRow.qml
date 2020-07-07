@@ -5,7 +5,7 @@ import QtQuick.Controls 2.0
 
 Row {
 
-        width: parent.width
+        width: 400
         height: 20
         opacity: 1
 

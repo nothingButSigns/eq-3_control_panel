@@ -15,6 +15,29 @@ Window {
     height: 480
     title: qsTr("Eqiva eq-3 radiator valve")
 
+    Rectangle {
+        id: rectangle
+        width: parent.width
+        height: parent.height
+
+        color: "#f2c5c5"
+        gradient: Gradient {
+            GradientStop {
+                position: 0
+                color: "#f2c5c5"
+            }
+
+            GradientStop {
+                position: 1
+                color: "#000000"
+            }
+        }
+
+        Component.onCompleted: {
+            statusText.visible = false
+        }
+
+
     Grid {
         id: grid
         x: 12
@@ -24,12 +47,12 @@ Window {
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        columns: window.inPortrait ? 1 : 2
+        columns: window.inPortrait ? 1 : 3
         rows: window.inPortrait ? 6 : 3
         spacing: 10
 
         property int itemWidth: Math.round((width - spacing * (columns - 1)) / columns)
-        property int itemHeigt: Math.round((height - spacing * (rows - 1)) / rows)
+        property int itemHeight: Math.round((height - spacing * (rows - 1)) / rows)
 
 
         Repeater {
@@ -37,14 +60,23 @@ Window {
 
             Rectangle {
                 id: rect
-                width: grid.itemWidth; height: grid.itemHeigt
-                color: "#3ec19f"
+                width: grid.itemWidth; height: grid.itemHeight
                 transformOrigin: Item.Center
                 antialiasing: true
-                border.color: "#013f4f"
                 visible: true
                 border.width: 1
                 radius: 13
+                gradient: Gradient {
+                    GradientStop {
+                        position: 0
+                        color: "#ffffff"
+                    }
+
+                    GradientStop {
+                        position: 1
+                        color: "#c6bebe"
+                    }
+                }
 
                 MouseArea {
                     anchors.fill: rect
@@ -56,40 +88,60 @@ Window {
                 }
 
                 Label {
-                    id: devName
-                    text: modelData.devName
-                    width: 44
+                    id: devAdress
+                    anchors.left: parent.left
+                    anchors.leftMargin: (parent.width - width)/2
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 40
+                    width: 130
                     height: 17
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: 0
-
-
+                    text: "Device address: \n" + modelData.devAddress
+                    horizontalAlignment: Text.AlignHCenter
                 }
 
                 Label {
-                    id: devAdress
-                    text: modelData.devAddress
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 0
-                    width: 44
+                    id: devName
+                    text: "Device name: \n" + modelData.devName
+                    horizontalAlignment: Text.AlignHCenter
+                    width: 60
                     height: 17
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    anchors.topMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: (parent.width - width)/2
                 }
             }
         }
     }
 
-    Button {
-        id: button
-        x: 548
-        y: 9
-        text: qsTr("Close")
-    }
-
     Loader {
         id: pageLoader
         anchors.fill: parent
+    }
+
+    Rectangle {
+        id: statusBar
+        width: parent.width
+        height: 25
+        color: "#000000"
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+
+        Text {
+            id: statusText
+            height: parent.height
+            color: "#ffffff"
+            text: qsTr("Searching...")
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            verticalAlignment: Text.AlignVCenter
+            visible: true
+
+
+        }
+    }
     }
 }
 

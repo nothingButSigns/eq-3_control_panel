@@ -31,6 +31,7 @@ Rectangle {
         anchors.top: tabBar.bottom
         anchors.topMargin: 0
         currentIndex: 0
+        enabled: true
 
         Item {
             id: generalOptions
@@ -73,20 +74,14 @@ Rectangle {
             if (BLEdevice.characteristicsAmount === 8)
             {
                 busyIndicator.visible = false
-                //                switchLockUnlock.modeSwitchTop.checkable = true
-                //                switchAutoManual.modeSwitchTop.checkable = true
-                //                switchLockUnlock.modeSwitchTop.opacity = 1.0
-                //                switchAutoManual.modeSwitchTop.opacity = 1.0
-
+                tabBar.enabled = true
+                swipeView.enabled = true
             }
             else
             {
-
                 busyIndicator.visible = true
-                //                switchLockUnlock.modeSwitchTop.checkable = false
-                //                switchAutoManual.modeSwitchTop.checkable = false
-                //                switchLockUnlock.modeSwitchTop.opacity = 0.5
-                //                switchAutoManual.modeSwitchTop.opacity = 0.5
+                tabBar.enabled = false
+                swipeView.enabled = false
             }
 
         }
@@ -107,14 +102,6 @@ Rectangle {
 
 
 
-
-
-
-
-
-
-
-
     TabBar {
         id: tabBar
         x: 49
@@ -124,6 +111,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 0
         visible: true
+        enabled: true
 
         TabButton {
             id: tabButton
@@ -174,7 +162,7 @@ Rectangle {
             onClicked: {
                 if (checked)
                 {
-                    BLEdevice.askForDailyProfiles();
+                    //BLEdevice.askForDailyProfiles();
                     swipeView.setCurrentIndex(2)
 
                 }
@@ -195,8 +183,7 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:2;anchors_height:460;anchors_width:650}D{i:6;anchors_height:460;anchors_width:650}
-D{i:5;anchors_height:460;anchors_width:650}D{i:8;anchors_height:460;anchors_width:650}
-D{i:9;anchors_height:460;anchors_width:650}
+    D{i:2;anchors_height:460;anchors_width:650}D{i:5;anchors_height:460;anchors_width:650}
+D{i:8;anchors_height:460;anchors_width:650}D{i:9;anchors_height:460;anchors_width:650}
 }
 ##^##*/

@@ -8,6 +8,7 @@ import QtQuick.Controls 2.3
         y: 0
         width: 650
         height: 460
+        color: "#f2c5c5"
         gradient: Gradient {
             GradientStop {
                 position: 0
@@ -25,12 +26,14 @@ import QtQuick.Controls 2.3
             id: backToMainButton
             x: 21
             y: 374
+            width: 60
+            height: 30
             text: qsTr("Back")
             visible: true
             anchors.left: parent.left
-            anchors.leftMargin: 21
-            anchors.top: parent.top
-            anchors.topMargin: 390
+            anchors.leftMargin: 25
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 35
 
             onClicked: {
                 pageLoader.source = ""
@@ -39,7 +42,9 @@ import QtQuick.Controls 2.3
             }
         }
 
-        BasicFunctions { id: basicFunctions ; x: 0;y: 0; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter; visible: true; }
+
+
+        BasicFunctions { id: basicFunctions ; x: 0;y: 0; anchors.verticalCenterOffset: 10; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter; visible: true; }
 
     }
 

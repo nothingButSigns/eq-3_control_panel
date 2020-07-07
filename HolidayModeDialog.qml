@@ -25,9 +25,9 @@ Dialog {
             id: temperatureSlider
             width: 214
             height: 42
+            anchors.topMargin: 40
             value: 16
-            anchors.top: temperature.bottom
-            anchors.topMargin: parent.height/30
+            anchors.top: parent.top
             anchors.left: parent.left
             anchors.leftMargin: (parent.width - width - tempValue.width - element1.width - tempValue.anchors.leftMargin)/2
             snapMode: Slider.SnapAlways
@@ -41,7 +41,7 @@ Dialog {
         Text {
             id: tempValue
             y: 78
-            width: 50
+            width: 30
             height: 30
             text: temperatureSlider.value
             anchors.left: temperatureSlider.right
@@ -52,9 +52,12 @@ Dialog {
 
         Text {
             id: element1
-            width: 50
+            width: 30
             height: 30
-            text: qsTr("deg C")
+            text: qsTr("︒C")
+            anchors.verticalCenterOffset: -5
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignTop
             anchors.verticalCenter: tempValue.verticalCenter
             anchors.left: tempValue.right
             anchors.leftMargin: 0
@@ -68,7 +71,7 @@ Dialog {
             anchors.left: parent.left
             anchors.leftMargin: parent.width/15
             anchors.top: parent.top
-            anchors.topMargin: parent.width/15
+            anchors.topMargin: 20
             font.pixelSize: 15
         }
 
@@ -78,7 +81,7 @@ Dialog {
             height: 25
             text: qsTr("Time:")
             anchors.top: parent.top
-            anchors.topMargin: parent.height/2.5
+            anchors.topMargin: 100
             anchors.left: parent.left
             anchors.leftMargin: parent.width/15
             font.pixelSize: 15
@@ -87,10 +90,11 @@ Dialog {
         ComboBox {
             id: hour
             x: 32
-            y: 171
 
             width: 70
             height: 25
+            anchors.top: parent.top
+            anchors.topMargin: 130
             model: Hours {}
 
         }
@@ -139,7 +143,7 @@ Dialog {
             y: 0
             height: 25
             text: qsTr("End date:")
-            anchors.topMargin: 210
+            anchors.topMargin: 180
             font.pixelSize: 15
             anchors.top: parent.top
             anchors.left: parent.left
@@ -153,9 +157,11 @@ Dialog {
 
         Button {
             id:endDateButton
-            x: 32
-            y: 241
             text: qsTr("Choose")
+            anchors.left: parent.left
+            anchors.leftMargin: 107
+            anchors.top: parent.top
+            anchors.topMargin: 180
             height: 20
             width: 80
             onClicked: endDateCalendar.open()
@@ -198,14 +204,13 @@ Dialog {
     Button {
         id: cancel
         x: 200
-        y: 115
         width: 80
         height: 20
         text: "Cancel"
+        anchors.top: parent.top
+        anchors.topMargin: 260
         anchors.rightMargin: (parent.width - 2*width - ok.anchors.rightMargin)/2
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height/9
         KeyNavigation.tab: ok
         onClicked: holidayMode.close()
     }
@@ -218,6 +223,7 @@ Dialog {
 
 /*##^##
 Designer {
-    D{i:20;anchors_height:20;anchors_y:115}
+    D{i:7;anchors_y:171}D{i:13;anchors_y:171}D{i:19;anchors_x:32;anchors_y:241}D{i:20;anchors_height:20;anchors_y:115}
+D{i:21;anchors_y:115}
 }
 ##^##*/

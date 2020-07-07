@@ -4,7 +4,7 @@
         <file>next_page.qml</file>
         <file>CustomRow.qml</file>
         <file>Description.qml</file>
-        <file>TxtSetting.qml</file>
+        <file>TempSlider.qml</file>
         <file>SwitchMode.qml</file>
         <file>BasicFunctions.qml</file>
         <file>Settings.qml</file>

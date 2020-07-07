@@ -29,6 +29,18 @@
 #define ON 0x01
 #define OFF 0x00
 
+// weekdays code
+
+enum Weekdays {
+    SATURDAY,
+    SUNDAY,
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY
+};
+
 
 
 #endif // EQ3_H

@@ -39,7 +39,7 @@ public:
         USERSPROFILE,
         PROFILEHOURSfrom,
         PROFILEMINSfrom,
-        PROFILETEMP,
+        PROFILETEMP
     };
 
     int rowCount(const QModelIndex &parent) const;
@@ -47,11 +47,11 @@ public:
     QHash<int, QByteArray> roleNames() const;
 
     Q_INVOKABLE void askForDailyProfiles();
-    Q_INVOKABLE void createNewEvent();
+    Q_INVOKABLE bool createNewEvent();
     Q_INVOKABLE void removeLastEvent();
     Q_INVOKABLE void updateHour(int index, QString hour);
     Q_INVOKABLE void updateMins(int index, QString mins);
-
+    Q_INVOKABLE void updateTemp(int index, float temp);
 
 
 protected:
@@ -82,6 +82,7 @@ public slots:
     void setHolidayMode(const QString hTemp, const QTime hTime, const QString daytime, const QDate hDate);
 
     void askForNextProfile();
+    void setNewDailyProfiles(QString day);
 
 
 private slots:
