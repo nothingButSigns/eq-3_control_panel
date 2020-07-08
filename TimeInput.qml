@@ -6,8 +6,6 @@ Rectangle {
     color: "#ffffff"
     border.color: "#d3caca"
 
-
-    //property alias txtInput: inId
     property var onTab
     property Item txtInput: inId
 

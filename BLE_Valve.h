@@ -64,8 +64,6 @@ public:
     void setNewDailyProfiles(const QString day, const QByteArray &data);
     char weekdaysResolver(QString day);
 
-    void getCharacteristicWritten(const QLowEnergyCharacteristic &info,
-                                              const QByteArray &value);
     void getComfortReducedModified(const QLowEnergyCharacteristic &info,
                                    const QByteArray &value);
     void getOffsetTempSet(const QLowEnergyCharacteristic &info,

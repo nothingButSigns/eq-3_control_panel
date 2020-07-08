@@ -69,10 +69,10 @@ Dialog {
 
         KeyNavigation.tab: cancel
         onClicked: {
-                offset = offsetValue.text
+            offset = offsetValue.text
 
-                BLEdevice.setOffsetTemp(offset)
-                comfTempDialog.close()
+            BLEdevice.setOffsetTemp(offset)
+            comfTempDialog.close()
         }
 
     }

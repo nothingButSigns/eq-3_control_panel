@@ -34,86 +34,86 @@ Window {
         }
 
 
-    Grid {
-        id: grid
-        x: 12
-        y: 40
-        width: 617
-        height: 400
-        anchors.horizontalCenterOffset: 0
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        columns: window.inPortrait ? 1 : 3
-        rows: window.inPortrait ? 6 : 3
-        spacing: 10
+        Grid {
+            id: grid
+            x: 12
+            y: 40
+            width: 617
+            height: 400
+            anchors.horizontalCenterOffset: 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            columns: window.inPortrait ? 1 : 3
+            rows: window.inPortrait ? 6 : 3
+            spacing: 10
 
-        property int itemWidth: Math.round((width - spacing * (columns - 1)) / columns)
-        property int itemHeight: Math.round((height - spacing * (rows - 1)) / rows)
+            property int itemWidth: Math.round((width - spacing * (columns - 1)) / columns)
+            property int itemHeight: Math.round((height - spacing * (rows - 1)) / rows)
 
 
-        Repeater {
-            model: BLEdevice.foundValves
+            Repeater {
+                model: BLEdevice.foundValves
 
-            Rectangle {
-                id: rect
-                width: grid.itemWidth; height: grid.itemHeight
-                transformOrigin: Item.Center
-                antialiasing: true
-                visible: true
-                border.width: 1
-                radius: 13
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0
-                        color: "#ffffff"
+                Rectangle {
+                    id: rect
+                    width: grid.itemWidth; height: grid.itemHeight
+                    transformOrigin: Item.Center
+                    antialiasing: true
+                    visible: true
+                    border.width: 1
+                    radius: 13
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0
+                            color: "#ffffff"
+                        }
+
+                        GradientStop {
+                            position: 1
+                            color: "#c6bebe"
+                        }
                     }
 
-                    GradientStop {
-                        position: 1
-                        color: "#c6bebe"
+                    MouseArea {
+                        anchors.fill: rect
+                        onClicked: {
+                            BLEdevice.connectToDevice(modelData.devAddress)
+                            pageLoader.source = "next_page.qml"
+
+                        }
                     }
-                }
 
-                MouseArea {
-                    anchors.fill: rect
-                    onClicked: {
-                        BLEdevice.connectToDevice(modelData.devAddress)
-                        pageLoader.source = "next_page.qml"
-
+                    Label {
+                        id: devAdress
+                        anchors.left: parent.left
+                        anchors.leftMargin: (parent.width - width)/2
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 40
+                        width: 130
+                        height: 17
+                        text: "Device address: \n" + modelData.devAddress
+                        horizontalAlignment: Text.AlignHCenter
                     }
-                }
 
-                Label {
-                    id: devAdress
-                    anchors.left: parent.left
-                    anchors.leftMargin: (parent.width - width)/2
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 40
-                    width: 130
-                    height: 17
-                    text: "Device address: \n" + modelData.devAddress
-                    horizontalAlignment: Text.AlignHCenter
-                }
-
-                Label {
-                    id: devName
-                    text: "Device name: \n" + modelData.devName
-                    horizontalAlignment: Text.AlignHCenter
-                    width: 60
-                    height: 17
-                    anchors.top: parent.top
-                    anchors.topMargin: 0
-                    anchors.left: parent.left
-                    anchors.leftMargin: (parent.width - width)/2
+                    Label {
+                        id: devName
+                        text: "Device name: \n" + modelData.devName
+                        horizontalAlignment: Text.AlignHCenter
+                        width: 60
+                        height: 17
+                        anchors.top: parent.top
+                        anchors.topMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: (parent.width - width)/2
+                    }
                 }
             }
         }
-    }
 
-    Loader {
-        id: pageLoader
-        anchors.fill: parent
-    }
+        Loader {
+            id: pageLoader
+            anchors.fill: parent
+        }
 
 
 

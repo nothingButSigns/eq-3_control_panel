@@ -5,8 +5,6 @@ import QtQuick.Controls 2.3
 
 Dialog {
     id: dialog
-    //width: 800
-    //height: 500
     title: "Create daily profile"
 
     Rectangle {
@@ -135,65 +133,65 @@ Dialog {
         }
     }
 
-            ComboBox {
-                id: day
-                x: 40
-                y: 60
-                anchors.top: parent.top
-                anchors.topMargin: 30
-                anchors.left: parent.left
-                anchors.leftMargin: 40
-                model: Weekdays {}
-            }
+    ComboBox {
+        id: day
+        x: 40
+        y: 60
+        anchors.top: parent.top
+        anchors.topMargin: 30
+        anchors.left: parent.left
+        anchors.leftMargin: 40
+        model: Weekdays {}
+    }
 
-            Label {
-                id: warning
-                width: 250
-                height: 20
-                text: qsTr("There must be at least 3 entries")
-                anchors.left: parent.left
-                anchors.leftMargin: 70
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 35
-                color: "red"
-                visible: true
+    Label {
+        id: warning
+        width: 250
+        height: 20
+        text: qsTr("There must be at least 3 entries")
+        anchors.left: parent.left
+        anchors.leftMargin: 70
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 35
+        color: "red"
+        visible: true
 
-            }
+    }
 
-            Button {
-                id: accept
-                width: 80
-                height: 30
-                text: "Accept"
-                autoExclusive: true
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 30
-                anchors.right: parent.right
-                anchors.rightMargin: 150
-                onClicked: {
-                    if (mainList.cout < 3)
-                        return
-                    else
-                        BLEdevice.setNewDailyProfiles(day.currentText)
-                }
-
-            }
-
-            Button {
-                id: cancel
-                width: 80
-                height: 30
-                text: "Cancel"
-                autoExclusive: true
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 30
-                anchors.right: parent.right
-                anchors.rightMargin: 40
-                onClicked: close()
-            }
+    Button {
+        id: accept
+        width: 80
+        height: 30
+        text: "Accept"
+        autoExclusive: true
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+        anchors.right: parent.right
+        anchors.rightMargin: 150
+        onClicked: {
+            if (mainList.cout < 3)
+                return
+            else
+                BLEdevice.setNewDailyProfiles(day.currentText)
         }
 
-        /*##^##
+    }
+
+    Button {
+        id: cancel
+        width: 80
+        height: 30
+        text: "Cancel"
+        autoExclusive: true
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+        anchors.right: parent.right
+        anchors.rightMargin: 40
+        onClicked: close()
+    }
+}
+
+/*##^##
 Designer {
     D{i:0;autoSize:true;height:480;width:640}
 }

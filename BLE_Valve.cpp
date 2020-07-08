@@ -253,18 +253,6 @@ void BLE_Valve::setHolidayMode(const QString hTemp, const QTime hTime, const QSt
 }
 
 
-void BLE_Valve::getCharacteristicWritten(const QLowEnergyCharacteristic &info,
-                                          const QByteArray &value)
-{
-
-    qDebug() << "Response characteristic UUID: " << info.uuid();
-    qDebug() << "Response characteristic VALUE: " << info.value().size();
-    qDebug() << "Response characteristic QByteArray SIZE: " << value.size();
-    qDebug() << "Response SENT VALUE: " << info.value().toHex();
-}
-
-
-
 void BLE_Valve::getComfortReducedModified(const QLowEnergyCharacteristic &info,
                                           const QByteArray &value)
 {
@@ -285,7 +273,6 @@ void BLE_Valve::getWindowModeModified(const QLowEnergyCharacteristic &info, cons
 
 void BLE_Valve::getDailyProfileResponse(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    qDebug() << "inside daily response";
     DailyProfile * ptr = new DailyProfile(value);
     beginInsertRows(QModelIndex(), m_models.size(), m_models.size());
 
@@ -295,28 +282,19 @@ void BLE_Valve::getDailyProfileResponse(const QLowEnergyCharacteristic &info, co
     QString result = value.toHex();
     result += QLatin1Char('\n');
 
-
-    qDebug() << "Result: " <<result;
-
-      emit dailyProfileReceived();
-
+    emit dailyProfileReceived();
 
 }
 
 void BLE_Valve::getDailyProfileResponse2(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    qDebug() << "REceived notif";
-
     QString result = value;
     result += QLatin1Char('\n');
     result += value.toHex();
-
-    qDebug() << result;
 }
 
 void BLE_Valve::askForDailyProfiles(int day)
 {
-    qDebug() << "inside BLE_Valve; day = " << day;
     QByteArray value;
     value.resize(2);
 

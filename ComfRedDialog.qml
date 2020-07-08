@@ -87,7 +87,7 @@ Dialog {
                 height: parent.height
                 anchors.centerIn: parent
                 anchors.fill: parent
-                border.color: "#998c8c"               
+                border.color: "#998c8c"
 
                 TextInput {
                     id: newRed

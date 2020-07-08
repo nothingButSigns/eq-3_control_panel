@@ -156,6 +156,29 @@ Rectangle {
         }
     }
 
+    Button {
+        id: backToMainButton
+        x: 21
+        y: 374
+        width: 60
+        height: 30
+        text: qsTr("Back")
+        visible: true
+        anchors.left: parent.left
+        anchors.leftMargin: 25
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 35
+        enabled: true
+
+        onClicked: {
+            BLEdevice.disconnectFromDevice();
+            BLEdevice.startDeviceDiscovery();
+            pageLoader.source = ""
+            pageLoader.source = "main.qml"
+            pageLoader.source = ""
+        }
+    }
+
 
     Rectangle {
         id: statusBar

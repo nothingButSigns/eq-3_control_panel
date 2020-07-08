@@ -180,7 +180,6 @@ Item {
                     id: switchReduced
                     anchors.right: parent.right
                     anchors.rightMargin: 0
-                    //modeSwitchTop.text: modeSwitchTop.checked? 'Activated' : 'Deactivated'
                     modeSwitchTop.onToggled: {
                         if (modeSwitchTop.checked == true)
                             BLEdevice.setReduced(true)
@@ -218,7 +217,6 @@ Item {
                     id: switchComfort
                     anchors.right: parent.right
                     anchors.rightMargin: 0
-                    // modeSwitchTop.text: modeSwitchTop.checked? 'Activated' : 'Deactivated'
                     modeSwitchTop.onToggled: {
                         if (modeSwitchTop.checked == true)
                             BLEdevice.setComfort(true)
@@ -256,7 +254,6 @@ Item {
                     id: switchBoost
                     anchors.right: parent.right
                     anchors.rightMargin: 0
-                    // modeSwitchTop.text: modeSwitchTop.checked? 'Activated' : 'Deactivated'
                     modeSwitchTop.onToggled: {
                         if (modeSwitchTop.checked == true)
                             BLEdevice.boost(true)

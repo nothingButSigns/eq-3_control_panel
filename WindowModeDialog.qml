@@ -138,11 +138,11 @@ Dialog {
 
         KeyNavigation.tab: cancel
         onClicked: {
-                windowTemp = temperatureSlider.value
-                windowDuration = durationSlider.value
+            windowTemp = temperatureSlider.value
+            windowDuration = durationSlider.value
 
-                BLEdevice.modifyWindowMode(windowTemp, windowDuration)
-                windowMode.close()
+            BLEdevice.modifyWindowMode(windowTemp, windowDuration)
+            windowMode.close()
         }
 
     }

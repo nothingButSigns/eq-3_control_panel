@@ -413,62 +413,37 @@ BLE_Valve *BLE_device::getDevice()
 }
 void BLE_device::set_temp(QString temp)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->setTemperature(temp);
 }
 
 void BLE_device::setAutoManual(bool mode)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->setAutoManual(mode);
 }
 
 void BLE_device::lock(bool onOff)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->lock(onOff);
 }
 
 void BLE_device::setReduced(bool onOff)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->setReduced(onOff);
-
 }
 
 void BLE_device::setComfort(bool onOff)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->setComfort(onOff);
-
 }
 
 void BLE_device::boost(bool onOff)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->boost(onOff);
-
 }
 
 void BLE_device::setDateTime(const QDate newDate, const QTime newTime)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->setDateTime(newDate, newTime);
-
 }
 
 void BLE_device::modifyComfortReducedTemp(const QString &newComfort, const QString &newReduced)
@@ -511,11 +486,7 @@ void BLE_device::modifyWindowMode(const float windowTemp, const int durationTime
 
 void BLE_device::setHolidayMode(const QString hTemp, const QTime hTime, const QString daytime, const QDate hDate)
 {
-    connect(connectedDevice->eqService->getService(), &QLowEnergyService::characteristicWritten, connectedDevice
-            , &BLE_Valve::getCharacteristicWritten);
-
     connectedDevice->setHolidayMode(hTemp, hTime, daytime, hDate);
-
 }
 
 void BLE_device::askForDailyProfiles()
