@@ -33,10 +33,6 @@ Window {
             }
         }
 
-        Component.onCompleted: {
-            statusText.visible = false
-        }
-
 
     Grid {
         id: grid
@@ -119,29 +115,34 @@ Window {
         anchors.fill: parent
     }
 
+
+
+    }
+
+
     Rectangle {
         id: statusBar
+        x: -9
+        y: -8
         width: parent.width
         height: 25
         color: "#000000"
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 0
+        anchors.left: parent.left
 
-        Text {
+        Label {
             id: statusText
             height: parent.height
             color: "#ffffff"
-            text: qsTr("Searching...")
-            anchors.right: parent.right
+            text: BLEdevice.programState
             anchors.rightMargin: 10
-            verticalAlignment: Text.AlignVCenter
+            anchors.right: parent.right
             visible: true
-
-
+            verticalAlignment: Text.AlignVCenter
         }
-    }
+
     }
 }
 

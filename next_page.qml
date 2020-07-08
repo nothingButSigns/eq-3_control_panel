@@ -16,13 +16,6 @@ Rectangle {
     anchors.horizontalCenter: parent.horizontalCenter
     visible: true
 
-    Component.onCompleted: {
-        if (BLEdevice.characteristicsAmount === 8)
-        {
-            busyIndicator.visible = false
-        }
-        else busyIndicator.visible = true
-    }
 
     SwipeView {
         id: swipeView
@@ -31,7 +24,7 @@ Rectangle {
         anchors.top: tabBar.bottom
         anchors.topMargin: 0
         currentIndex: 0
-        enabled: true
+        enabled: false
 
         Item {
             id: generalOptions
@@ -67,23 +60,15 @@ Rectangle {
     }
 
 
-
     Connections {
         target: BLEdevice
-        onCharacteristicsUpdated: {
-            if (BLEdevice.characteristicsAmount === 8)
-            {
-                busyIndicator.visible = false
-                tabBar.enabled = true
-                swipeView.enabled = true
-            }
-            else
-            {
-                busyIndicator.visible = true
-                tabBar.enabled = false
-                swipeView.enabled = false
-            }
-
+        onConnectionSucceeed: {
+            busyIndicator.visible = false
+            tabBar.enabled = true
+            swipeView.enabled = true
+        }
+        onInsufficientResources: {
+            errorDialog.open()
         }
     }
 
@@ -98,6 +83,7 @@ Rectangle {
         visible: true
         wheelEnabled: false
 
+
     }
 
 
@@ -111,7 +97,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 0
         visible: true
-        enabled: true
+        enabled: false
 
         TabButton {
             id: tabButton
@@ -162,12 +148,38 @@ Rectangle {
             onClicked: {
                 if (checked)
                 {
-                    //BLEdevice.askForDailyProfiles();
+                    BLEdevice.askForDailyProfiles();
                     swipeView.setCurrentIndex(2)
 
                 }
             }
         }
+    }
+
+
+    Rectangle {
+        id: statusBar
+        width: parent.width
+        height: 25
+        color: "#000000"
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+
+        Text {
+            id: statusText
+            height: parent.height
+            color: "#ffffff"
+            text: BLEdevice.programState
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
+
+    ErrorDialog {
+        id: errorDialog
     }
 
 

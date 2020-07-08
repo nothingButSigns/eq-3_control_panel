@@ -2,19 +2,17 @@
 #define DISCOVEREDDEVICE_H
 
 #include "QObject"
-#include <QBluetoothDeviceDiscoveryAgent>
-#include <qbluetoothdeviceinfo.h>
-#include <QDate>
 #include "eq-3.h"
 #include "BLE_Service.h"
 #include "BLE_Characteristic.h"
 #include "DailyProfile.h"
+#include <QBluetoothDeviceDiscoveryAgent>
+#include <qbluetoothdeviceinfo.h>
+#include <QDate>
 #include <QMetaType>
 #include <QTimer>
 #include <QAbstractListModel>
 
-
-Q_DECLARE_METATYPE (QList <QByteArray *>);
 
 class BLE_Valve: public QAbstractListModel
 {
@@ -25,7 +23,7 @@ class BLE_Valve: public QAbstractListModel
 
 public:
 
-    ////AbstractLIstMOdel interface
+    // AbstractLIstModel interface
     enum SubModelRoles {
         DAY = Qt::UserRole+1,
         DPROFILE
@@ -41,7 +39,7 @@ protected:
 
 public:
 
-    BLE_Valve() = default; //the compiler creates constructor with no args even if other constructors are present
+    BLE_Valve() = default;
     BLE_Valve(const QBluetoothDeviceInfo &d);
     ~BLE_Valve();
 

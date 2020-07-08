@@ -66,10 +66,6 @@ void BLE_Valve::setCustomName(QString name)
 
 void BLE_Valve::setTemperature(QString temperature)
 {
-    qDebug() << "Inside 'writeCHaracteristic'";
-
-
-
     int tempInt = static_cast<int>(2 * temperature.toFloat());
     QByteArray value;
     value.resize(2);
@@ -81,8 +77,6 @@ void BLE_Valve::setTemperature(QString temperature)
 
 void BLE_Valve::setAutoManual(bool mode)
 {
-    qDebug() << "Inside set MODE 'writeCHaracteristic'";
-
 
     QByteArray value;
     value.resize(2);
@@ -105,7 +99,6 @@ void BLE_Valve::setAutoManual(bool mode)
 
 void BLE_Valve::lock(bool onOff)
 {
-    qDebug() << "Inside LOCK 'writeCHaracteristic'";
 
     QByteArray value;
     value.resize(2);
@@ -136,14 +129,8 @@ void BLE_Valve::setReduced(bool onOff)
         // activate Reduced temperature
         value[0] = SET_REDUCED;
     }
-    else
-    {
-        // deactivate Reduced temperature
-        //value[0] = LOCK;
-    }
 
     eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);
-
 }
 
 void BLE_Valve::setComfort(bool onOff)
@@ -155,11 +142,6 @@ void BLE_Valve::setComfort(bool onOff)
     {
         // activate Reduced temperature
         value[0] = SET_COMFORT;
-    }
-    else
-    {
-        // deactivate Reduced temperature
-        //value[0] = LOCK;
     }
 
     eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), value);

@@ -36,6 +36,7 @@ import QtQuick.Controls 2.3
             anchors.bottomMargin: 35
 
             onClicked: {
+                BLEdevice.startDeviceDiscovery();
                 pageLoader.source = ""
                 pageLoader.source = "main.qml"
                 pageLoader.source = ""

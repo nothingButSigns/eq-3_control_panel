@@ -7,7 +7,6 @@
 #include "QMap"
 #include <QDebug>
 #include <QMetaType>
-///#include "eventsmodel.h"
 #include <QAbstractListModel>
 #include <event.h>
 
@@ -17,8 +16,6 @@ class DailyProfile: public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString Day READ readDay WRITE setDay NOTIFY DayChanged)
-    //Q_PROPERTY(QString temp1 READ getTemp1 NOTIFY temp1Changed)
-
 
 
 public:
@@ -40,7 +37,6 @@ protected:
 
 public:
     DailyProfile(const QByteArray &array);
-    //DailyProfile(const QString someText);
     ~DailyProfile();
 
     QByteArray retProfile();

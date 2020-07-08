@@ -23,5 +23,6 @@
         <file>Weekdays.qml</file>
         <file>DailyProfileRow.qml</file>
         <file>Hours24.qml</file>
+        <file>ErrorDialog.qml</file>
     </qresource>
 </RCC>

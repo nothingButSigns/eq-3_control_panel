@@ -1,28 +1,27 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#include "BLE_Valve.h"
+#include "BLE_Service.h"
+#include "BLE_Characteristic.h"
+
 #include <QObject>
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QLowEnergyController>
 #include <QList>
 #include <QVariant>
 #include <QDate>
-#include "BLE_Valve.h"
-#include "BLE_Service.h"
-#include "BLE_Characteristic.h"
-
 #include <QAbstractListModel>
 
 
 class BLE_device: public QAbstractListModel
 {
     Q_OBJECT
-    //Q_ENUMS(SOmeModelRoles)
-  //  Q_PROPERTY(QVariant searching READ discoveryFinished NOTIFY startConnecting)
-//    Q_PROPERTY(QVariant characteristicList READ getCharacteristics NOTIFY characteristicsUpdated)
     Q_PROPERTY(QVariant foundValves READ getFoundValves NOTIFY valvesDiscovered)
-    Q_PROPERTY(QString state READ getState WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(QString programState READ getState WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(quint8 characteristicsAmount READ getCharAmount WRITE updateCharAmount NOTIFY characteristicsUpdated)
+    Q_PROPERTY(NOTIFY connectionSucceeed)
+    Q_PROPERTY(NOTIFY insufficientResources)
 
 public:
     BLE_device();
@@ -31,9 +30,9 @@ public:
     QString getState();
     QVariant getCharacteristics();
     QVariant getFoundValves();
-    quint8 getCharAmount(); //to know if all characteristics has been found and enable communicating with a valve if so
+    quint8 getCharAmount();
 
-    ///////// QAbstract model interface
+    // QAbstract model interface
     enum SOmeModelRoles {
         CONNECTEDDEVICE = Qt::UserRole+1,
         USERSPROFILE,
@@ -65,10 +64,9 @@ public slots:
 
     void startDeviceDiscovery();
     void connectToDevice(QString address);
-//    void readCharacteristic();
+    void stopConnectingToDevice();
     void discoverServiceDetails(QLowEnergyService::ServiceState sState);
-    void getCharacteristicValue(const QLowEnergyCharacteristic &char_info,
-                                const QByteArray &char_value);
+
     void set_temp(QString temp);
     void setAutoManual(bool mode);
     void lock(bool onOff);
@@ -83,6 +81,7 @@ public slots:
 
     void askForNextProfile();
     void setNewDailyProfiles(QString day);
+    void disconnectFromDevice();
 
 
 private slots:
@@ -90,11 +89,15 @@ private slots:
     void discoveryFinished();
     void addDevice(const QBluetoothDeviceInfo &device);
     void deviceConnected();
+    void deviceDisconnected();
+    void discoveryCanceled();
+    void discoveryError(const QBluetoothDeviceDiscoveryAgent::Error error);
+    void connectionError(QLowEnergyController::Error newError);
     void addService(const QBluetoothUuid &uuid);
     void addCharacteristics();
 
+
 Q_SIGNALS:
-    void startConnecting();
     void serviceAdded();
     void characteristicsUpdated();
     void nextCharacteristic();
@@ -103,20 +106,23 @@ Q_SIGNALS:
     void stateChanged();
     void reducedChanged();
     void comfortChanged();
+    void cannotConnectToDevice();
+    void connectionSucceeed();
+    void insufficientResources();
 
 private:
     void setState(const QString &new_state);
     void updateCharAmount(const quint8 amount);
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
     QList <QObject *> Valves;
-    QList <QObject *> Lightbulbs;
 
     QLowEnergyController *LEcontroller = nullptr;
 
-    QString state;
+    QString state = "Program state";
     quint8 serviceIndex = 0;
     quint8 charAmount = 0;
     quint8 day = 0;
+    QTimer timer;
 
 };
 
