@@ -1,11 +1,11 @@
 #ifndef DISCOVEREDDEVICE_H
 #define DISCOVEREDDEVICE_H
 
-#include "QObject"
 #include "eq-3.h"
 #include "BLE_Service.h"
 #include "BLE_Characteristic.h"
 #include "DailyProfile.h"
+
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <qbluetoothdeviceinfo.h>
 #include <QDate>
@@ -72,9 +72,6 @@ public:
                                const QByteArray &value);
     void getDailyProfileResponse(const QLowEnergyCharacteristic &info,
                                  const QByteArray &value);
-    void getDailyProfileResponse2(const QLowEnergyCharacteristic &info,
-                                 const QByteArray &value);
-
 
 Q_SIGNALS:
     void devChanged();

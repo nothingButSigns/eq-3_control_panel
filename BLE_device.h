@@ -20,7 +20,7 @@ class BLE_device: public QAbstractListModel
     Q_PROPERTY(QVariant foundValves READ getFoundValves NOTIFY valvesDiscovered)
     Q_PROPERTY(QString programState READ getState WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(bool connectionS READ getConnectionS NOTIFY connectionSucceeed)
-    Q_PROPERTY(NOTIFY insufficientResources)
+
 
 public:
     BLE_device();
@@ -110,7 +110,6 @@ Q_SIGNALS:
     void comfortChanged();
     void cannotConnectToDevice();
     void connectionSucceeed();
-    void insufficientResources();
 
 private:
     void setState(const QString &new_state);
@@ -120,9 +119,7 @@ private:
     QLowEnergyController *LEcontroller = nullptr;
 
     QString state = "Program state";
-    //quint8 serviceIndex = 0;
     quint8 day = 0;
-    QTimer timer;
     bool connectionS = false;
     bool randomAddress = false;
 

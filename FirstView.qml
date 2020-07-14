@@ -16,11 +16,6 @@ Rectangle {
     anchors.horizontalCenter: parent.horizontalCenter
     visible: true
 
-//    Component.onCompleted: {
-//        if (BLEdevice.connectionS)
-//            busyIndicator.visible = false;
-//    }
-
 
     SwipeView {
         id: swipeView
@@ -72,10 +67,6 @@ Rectangle {
             tabBar.enabled = true
             swipeView.enabled = true
         }
-
-        onInsufficientResources: {
-            errorDialog.open()
-        }
     }
 
     BusyIndicator {
@@ -88,8 +79,6 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: BLEdevice.connectionS ? false : true
         wheelEnabled: false
-
-
     }
 
 
@@ -118,9 +107,7 @@ Rectangle {
             anchors.top: parent.top
             onClicked: {
                 if (checked)
-                {
                     swipeView.setCurrentIndex(0)
-                }
             }
         }
 
@@ -135,10 +122,7 @@ Rectangle {
             checked: false
             onClicked: {
                 if (checked)
-                {
                     swipeView.setCurrentIndex(1)
-
-                }
             }
         }
 
@@ -156,7 +140,6 @@ Rectangle {
                 {
                     BLEdevice.askForDailyProfiles();
                     swipeView.setCurrentIndex(2)
-
                 }
             }
         }
@@ -177,7 +160,6 @@ Rectangle {
         enabled: true
 
         onClicked: {
-           // BLEdevice.disconnectFromDevice();
             BLEdevice.startDeviceDiscovery();
             pageLoader.source = ""
             pageLoader.source = "main.qml"
@@ -205,10 +187,6 @@ Rectangle {
             anchors.rightMargin: 10
             verticalAlignment: Text.AlignVCenter
         }
-    }
-
-    ErrorDialog {
-        id: errorDialog
     }
 
 

@@ -6,7 +6,7 @@ Dialog {
     id: comfTempDialog
     height: 200
     width: 350
-    title: "Modify comfort temperature and reduced temperature"
+    title: "Modify comfort temperature \nand reduced temperature"
 
     property string comfTemp: ""
     property string redTemp: ""

@@ -263,6 +263,7 @@ void BLE_Valve::getComfortReducedModified(const QLowEnergyCharacteristic &info,
 void BLE_Valve::getOffsetTempSet(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
     offsetTemp = value.at(1);
+    qDebug() << "getOffsetTemp: " << offsetTemp;
 }
 
 void BLE_Valve::getWindowModeModified(const QLowEnergyCharacteristic &info, const QByteArray &value)
@@ -286,13 +287,6 @@ void BLE_Valve::getDailyProfileResponse(const QLowEnergyCharacteristic &info, co
 
 }
 
-void BLE_Valve::getDailyProfileResponse2(const QLowEnergyCharacteristic &info, const QByteArray &value)
-{
-    QString result = value;
-    result += QLatin1Char('\n');
-    result += value.toHex();
-}
-
 void BLE_Valve::askForDailyProfiles(int day)
 {
     QByteArray value;
@@ -313,7 +307,6 @@ void BLE_Valve::setNewDailyProfiles(const QString day, const QByteArray &data)
     dataToBeSend += data;
 
     eqService->characteristicWriting(eqCharacteristic->getCharacteristic(), dataToBeSend);
-
 
 }
 

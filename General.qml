@@ -21,7 +21,14 @@ Rectangle {
         }
     }
 
-    BasicFunctions { id: basicFunctions ; x: 0;y: 0; anchors.verticalCenterOffset: 10; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter; visible: true; }
+    BasicFunctions {
+        id: basicFunctions
+        width: parent.width
+        height: parent.height
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        visible: true
+    }
 
 }
 

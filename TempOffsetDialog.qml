@@ -48,7 +48,8 @@ Dialog {
             id: element1
             width: 40
             height: 30
-            text: qsTr("   deg C")
+            text: qsTr("︒C")
+            anchors.verticalCenterOffset: -3
             anchors.verticalCenter: offsetValue.verticalCenter
             anchors.left: offsetValue.right
             anchors.leftMargin: 0

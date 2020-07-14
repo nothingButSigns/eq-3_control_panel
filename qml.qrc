@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>next_page.qml</file>
+        <file>FirstView.qml</file>
         <file>CustomRow.qml</file>
         <file>Description.qml</file>
         <file>TempSlider.qml</file>
@@ -23,6 +23,5 @@
         <file>Weekdays.qml</file>
         <file>DailyProfileRow.qml</file>
         <file>Hours24.qml</file>
-        <file>ErrorDialog.qml</file>
     </qresource>
 </RCC>

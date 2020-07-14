@@ -8,11 +8,17 @@ Item {
 
     CustomRow {
         id: tempSetting
-        spacing: 0
-        width: 600
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.top
-        anchors.bottomMargin: 170
+        spacing: 20
+        width: parent.width
+        //anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: parent.height * 6/7
+
+        Rectangle {
+            height: parent.height
+            opacity: 0
+            width: (element.width - temDescColumn.width - newTempInput.width - temDescColumn1.width - 4 * parent.spacing)/2
+        }
 
         Column {
             id: temDescColumn
@@ -28,18 +34,14 @@ Item {
 
         Column {
             id: newTempInput
-            height: parent.height * 2
-            anchors.left: parent.left
-            anchors.leftMargin: temDescColumn.width
+            height: parent.height * 2 - 20
+            opacity: 1
             width: 300
-            y: -10
 
             TempSlider {
                 id: newTemp
-                anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-
             }
 
         }
@@ -48,8 +50,6 @@ Item {
             id: temDescColumn1
             width: 100
             height: parent.height
-            anchors.left: parent.left
-            anchors.leftMargin: 500
 
             Button {
                 id: button
@@ -60,6 +60,12 @@ Item {
                     BLEdevice.set_temp(newTemp.value)
                 }
             }
+        }
+
+        Rectangle {
+            height: parent.height
+            opacity: 0
+            width: (element.width - temDescColumn.width - newTempInput.width - temDescColumn1.width - 4 * parent.spacing)/2
         }
     }
 
@@ -269,8 +275,10 @@ Item {
     }
 }
 
+
+
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:0;width:0}
+    D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/

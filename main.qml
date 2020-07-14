@@ -13,7 +13,7 @@ Window {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Eqiva eq-3 radiator valve")
+    title: qsTr("Eqiva eq-3 radiator valve control panel")
 
     Rectangle {
         id: rectangle
@@ -78,7 +78,7 @@ Window {
                         anchors.fill: rect
                         onClicked: {
                             BLEdevice.connectToDevice(modelData.devAddress)
-                            pageLoader.source = "next_page.qml"
+                            pageLoader.source = "FirstView.qml"
 
                         }
                     }

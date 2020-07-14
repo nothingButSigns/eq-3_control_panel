@@ -172,7 +172,10 @@ Dialog {
             if (mainList.cout < 3)
                 return
             else
+            {
                 BLEdevice.setNewDailyProfiles(day.currentText)
+                close()
+            }
         }
 
     }
