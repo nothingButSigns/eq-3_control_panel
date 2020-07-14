@@ -18,8 +18,6 @@ BLE_device::BLE_device()
             &BLE_device::deviceDiscovered);
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this,
             &BLE_device::discoveryFinished);
-    connect(LEcontroller, &QLowEnergyController::connected, this, &BLE_device::deviceConnected);
-    connect(this, &BLE_device::serviceAdded, this, &BLE_device::addCharacteristics);
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::canceled, this,
             &BLE_device::discoveryCanceled);
     connect(discoveryAgent, QOverload<QBluetoothDeviceDiscoveryAgent::Error>::of(&QBluetoothDeviceDiscoveryAgent::error),
@@ -35,8 +33,12 @@ BLE_device::BLE_device()
 BLE_device::~BLE_device()
 {
     delete discoveryAgent;
-    delete LEcontroller;
+    discoveryAgent = nullptr;
     delete connectedDevice;
+    connectedDevice = nullptr;
+    delete LEcontroller;
+    LEcontroller = nullptr;
+
     Valves.clear();
 }
 
@@ -64,10 +66,8 @@ void BLE_device::addDevice(const QBluetoothDeviceInfo &device)
         QString devName = device.name();
 
         // append only radiator valves
-        if (devName == "CC-RT-BLE")
-        {
+        //if (devName == "CC-RT-BLE")
             Valves.append(element);
-        }
     }
 }
 
@@ -81,13 +81,12 @@ void BLE_device::discoveryFinished()
 {
     QString temp_state = state;
 
+    qDebug() << "DISCOVERY FINISHED";
     state = "Discovery finished";
     emit stateChanged();
 
     QTimer::singleShot(1000,[&,temp_state]{
         if(state != "Discovery finished")
-            return;
-        else if (temp_state == "Searching for devices..." && state == "Discovery finished")
             return;
         else {
             state = temp_state;
@@ -99,20 +98,24 @@ void BLE_device::discoveryFinished()
 
 void BLE_device::deviceConnected()
 {
-    timer.stop();
-    state = "Device connected, discovering services ...";
+    //timer.stop();
+    qDebug() << "DEVICE CONNECTED";
+    state = "Discovering services ...";
     emit stateChanged();
+
     LEcontroller->discoverServices();
 }
 
 void BLE_device::deviceDisconnected()
 {
+    qDebug() << "DEVICE DISCONNECTED";
     state = "Device disconnected";
     emit stateChanged();
 }
 
 void BLE_device::discoveryCanceled()
 {
+    qDebug() << "DISCOVERY CANCELLED";
     state = "Discovery canceled";
     emit stateChanged();
 }
@@ -148,6 +151,9 @@ void BLE_device::connectionError(QLowEnergyController::Error newError)
 
 void BLE_device::connectToDevice(QString address)
 {
+
+    qDebug() << "connecting..." ;
+
     timer.setSingleShot(true);
 
     BLE_Valve *dev = nullptr;
@@ -160,25 +166,23 @@ void BLE_device::connectToDevice(QString address)
     }
 
     // check if there is any existing connection
-    if(LEcontroller)        
+    if(LEcontroller && connectedDevice)
     {
+        qDebug() << "Lecontroller";
         // disconnect from current device
-        if (connectedDevice->getAddress() != address)
-        {
             LEcontroller->disconnectFromDevice();
             delete connectedDevice;
-
-            state = "Connecting to device (address: " + address + ") ...";
-            emit stateChanged();
-        }
-
-        else
-            return;
-
+            connectedDevice = nullptr;
+            delete LEcontroller;
+            LEcontroller = nullptr;
     }
+    else
+        qDebug() << "without checking";
+
 
     state = "Connecting to device (address: " + address + ") ...";
     emit stateChanged();
+
 
     connectedDevice = dev;
 
@@ -187,16 +191,20 @@ void BLE_device::connectToDevice(QString address)
     connect(LEcontroller, &QLowEnergyController::disconnected, this, &BLE_device::deviceDisconnected);
     connect(LEcontroller, &QLowEnergyController::serviceDiscovered, this, &BLE_device::addService);
     connect(LEcontroller, &QLowEnergyController::discoveryFinished, this, &BLE_device::discoveryFinished);
+    connect(LEcontroller, &QLowEnergyController::discoveryFinished,
+            this, &BLE_device::serviceScanDone);
     connect(LEcontroller, QOverload<QLowEnergyController::Error>::of(&QLowEnergyController::error),
             this, &BLE_device::connectionError);
-    connect(this, &BLE_device::nextCharacteristic, this, &BLE_device::addCharacteristics);
 
-    connect(&timer, &QTimer::timeout, this, &BLE_device::stopConnectingToDevice);
+    //connect(&timer, &QTimer::timeout, this, &BLE_device::stopConnectingToDevice);
 
-    LEcontroller->setRemoteAddressType(QLowEnergyController::PublicAddress);
+    if (isRandomAddress())
+        LEcontroller->setRemoteAddressType(QLowEnergyController::RandomAddress);
+    else
+        LEcontroller->setRemoteAddressType(QLowEnergyController::PublicAddress);
 
     // set timeout for connection attempt
-    timer.start(10000);
+ // timer.start(10000);
 
     LEcontroller->connectToDevice();
 }
@@ -215,37 +223,40 @@ void BLE_device::addService(const QBluetoothUuid &uuid)
     BLE_Service *s = new BLE_Service(serv);
     connectedDevice->Services.append(s);
 
-    // Check whether given service is the one allowing valve control
-    if (uuid.toString() == SERVICE_UUID)
-        connectedDevice->eqService = new BLE_Service(serv);
+    if(s->get_uuid() == SERVICE_UUID)
+    {
+        connectedDevice->eqService = s;
+    }
 
+    qDebug() << "service added";
     emit serviceAdded();
 
 }
 
-void BLE_device::addCharacteristics()
+void BLE_device::addCharacteristics(int serviceIndex)
 {
+    qDebug() << "inside addCHar..; Characteristics: " << connectedDevice->Characteristics.size();
     QLowEnergyService * service = nullptr;
-    if (serviceIndex >= connectedDevice->Services.size())
-        return;
+
 
     BLE_Service *ble_s = qobject_cast <BLE_Service *> (connectedDevice->Services.at(serviceIndex));
     service = ble_s->getService();
 
     if (service->state() == QLowEnergyService::DiscoveryRequired)
     {
+        qDebug() << "Service state";
         connect(service, &QLowEnergyService::stateChanged, this, &BLE_device::discoverServiceDetails);
         service->discoverDetails();
         return;
     }
 
     const QList<QLowEnergyCharacteristic> LE_ch = service->characteristics();
+    qDebug() << "QList char count: " << LE_ch.size();
     for (auto ch : LE_ch)
     {
         BLE_Characteristic *c = new BLE_Characteristic(ch);
 
         connectedDevice->Characteristics.append(c);
-        charAmount++;
 
         // check whether given characteristic is one which allows reading/writing control commands
         if (ch.uuid().toString() == CHAR_UUID)
@@ -254,24 +265,48 @@ void BLE_device::addCharacteristics()
             connectedDevice->notifCharacteristic = new BLE_Characteristic(ch);
     }
 
+
     // once 8 characteristics has been found, characteristics gathering is completed
-    if(connectedDevice->Characteristics.size() == 8)
+//    if(connectedDevice->Characteristics.size() == 11)
+//    {
+//        if(!connectedDevice->eqCharacteristic || !connectedDevice->notifCharacteristic)
+//        {
+//             state = "Couldn't find required services or characteristics";
+//             emit stateChanged();
+//             emit insufficientResources();
+//        }
+//        else
+//        {    connectionS = true;
+//             emit connectionSucceeed();
+//             state = "Connection succeeded";
+//             emit stateChanged();
+//        }
+//    }
+        // QTimer::singleShot(0, this, &BLE_device::characteristicsUpdated);
+
+
+
+      //  emit nextCharacteristic();
+
+
+
+
+}
+
+void BLE_device::serviceScanDone()
+{
+    qDebug() << "serviceScanDone; Services.size() = " << connectedDevice->Services.size();
+    for (int i = 0; i< connectedDevice->Services.size(); i++)
     {
-        if(!connectedDevice->eqCharacteristic || !connectedDevice->notifCharacteristic)
-        {
-             state = "Couldn't find required services or characteristics";
-             emit stateChanged();
-             emit insufficientResources();
-        }
-        else
-        {
-             emit connectionSucceeed();
-             state = "Connection succeeded";
-             emit stateChanged();
-        }
+        qDebug() << "serviceScanDone; i value: " << i;
+        addCharacteristics(i);
     }
-    else
-         QTimer::singleShot(0, this, &BLE_device::characteristicsUpdated);
+
+    connectionS = true;
+    emit connectionSucceeed();
+    state = "Connection succeeded";
+    emit stateChanged();
+
 
 }
 
@@ -280,35 +315,40 @@ void BLE_device::setState(const QString &new_state)
     state = new_state;
 }
 
-void BLE_device::updateCharAmount(const quint8 amount)
-{
-    charAmount = amount;
-}
 
 void BLE_device::discoverServiceDetails(QLowEnergyService::ServiceState sState)
 {
+    qDebug() << "inside discoveSrD..; Characteristics: " << connectedDevice->Characteristics.size();
+    qDebug() << "Service state: ";
+
     if (sState != QLowEnergyService::ServiceDiscovered)
     {
+        qDebug() << "sState != QLowEnergyService::ServiceDiscovered";
         // queue the signal up
-        if (sState != QLowEnergyService::DiscoveringServices)
-        {
-            QMetaObject::invokeMethod(this, "characteristicsUpdated", Qt::QueuedConnection);
-        }
+//        if (sState != QLowEnergyService::DiscoveringServices)
+//        {
+//            qDebug() << "sState != QLowEnergyService::DiscoveringServices";
+//            QMetaObject::invokeMethod(this, "characteristicsUpdated", Qt::QueuedConnection);
+//        }
         return;
     }
 
     QLowEnergyService *service = qobject_cast <QLowEnergyService *> (sender());
 
     if(!service)
+    {
+        qDebug() << "!service";
         return;
+    }
 
 
     const QList <QLowEnergyCharacteristic> qChars = service->characteristics();
+    qDebug() << "Service details characteristics count: " << qChars.size();
     for (auto ch : qChars)
     {
         BLE_Characteristic *c = new BLE_Characteristic(ch);
 
-        c->populateDescriptors();
+       // c->populateDescriptors();
 
         connectedDevice->Characteristics.append(c);
 
@@ -318,31 +358,33 @@ void BLE_device::discoverServiceDetails(QLowEnergyService::ServiceState sState)
         else if (ch.uuid().toString() == NOTIFICATION)
             connectedDevice->notifCharacteristic = new BLE_Characteristic(ch);
 
-        charAmount++;
+
         emit characteristicsUpdated();
     }
 
 
-    if(connectedDevice->Characteristics.size() == 8)
-    {
-        if(!connectedDevice->eqCharacteristic || !connectedDevice->notifCharacteristic)
-        {
-             state = "Couldn't find required services or characteristics";
-             emit stateChanged();
-             emit insufficientResources();
-        }
-        else
-        {
-             emit connectionSucceeed();
-             state = "Connection succeeded";
-             emit stateChanged();
-        }
-    }
-    else
-    {
-        serviceIndex++;
-        emit nextCharacteristic();
-    }
+
+       // emit nextCharacteristic();
+
+
+//    if(connectedDevice->Characteristics.size() == 11)
+//    {
+//        if(!connectedDevice->eqCharacteristic || !connectedDevice->notifCharacteristic)
+//        {
+//             state = "Couldn't find required services or characteristics";
+//             emit stateChanged();
+//             emit insufficientResources();
+//        }
+//        else
+//        {
+//             connectionS = true;
+//             emit connectionSucceeed();
+
+//             state = "Connection succeeded";
+//             emit stateChanged();
+//        }
+//    }
+
 }
 
 QVariant BLE_device::getCharacteristics()
@@ -355,9 +397,15 @@ QVariant BLE_device::getFoundValves()
     return QVariant::fromValue(Valves);
 }
 
-quint8 BLE_device::getCharAmount()
+
+bool BLE_device::getConnectionS()
 {
-    return charAmount;
+    return connectionS;
+}
+
+bool BLE_device::isRandomAddress() const
+{
+    return randomAddress;
 }
 
 
@@ -621,11 +669,19 @@ void BLE_device::setNewDailyProfiles(QString day)
 
 void BLE_device::disconnectFromDevice()
 {
-    LEcontroller->disconnectFromDevice();
-    delete connectedDevice;
-    delete LEcontroller;
-    connectedDevice = nullptr;
-    LEcontroller = nullptr;
+    if (LEcontroller->state() != QLowEnergyController::UnconnectedState)
+    {
+        LEcontroller->disconnectFromDevice();
+        delete connectedDevice;
+        delete LEcontroller;
+        connectedDevice = nullptr;
+        LEcontroller = nullptr;
+
+        state = "Disconnected";
+        emit stateChanged();
+
+    }
+
 }
 
 void BLE_device::askForNextProfile()

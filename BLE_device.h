@@ -19,8 +19,7 @@ class BLE_device: public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(QVariant foundValves READ getFoundValves NOTIFY valvesDiscovered)
     Q_PROPERTY(QString programState READ getState WRITE setState NOTIFY stateChanged)
-    Q_PROPERTY(quint8 characteristicsAmount READ getCharAmount WRITE updateCharAmount NOTIFY characteristicsUpdated)
-    Q_PROPERTY(NOTIFY connectionSucceeed)
+    Q_PROPERTY(bool connectionS READ getConnectionS NOTIFY connectionSucceeed)
     Q_PROPERTY(NOTIFY insufficientResources)
 
 public:
@@ -31,6 +30,9 @@ public:
     QVariant getCharacteristics();
     QVariant getFoundValves();
     quint8 getCharAmount();
+    bool getConnectionS();
+    bool isRandomAddress() const;
+
 
     // QAbstract model interface
     enum SOmeModelRoles {
@@ -94,13 +96,13 @@ private slots:
     void discoveryError(const QBluetoothDeviceDiscoveryAgent::Error error);
     void connectionError(QLowEnergyController::Error newError);
     void addService(const QBluetoothUuid &uuid);
-    void addCharacteristics();
+    void addCharacteristics(int serviceIndex);
+    void serviceScanDone();
 
 
 Q_SIGNALS:
     void serviceAdded();
     void characteristicsUpdated();
-    void nextCharacteristic();
     void characteristicFound();
     void valvesDiscovered();
     void stateChanged();
@@ -112,17 +114,17 @@ Q_SIGNALS:
 
 private:
     void setState(const QString &new_state);
-    void updateCharAmount(const quint8 amount);
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
     QList <QObject *> Valves;
 
     QLowEnergyController *LEcontroller = nullptr;
 
     QString state = "Program state";
-    quint8 serviceIndex = 0;
-    quint8 charAmount = 0;
+    //quint8 serviceIndex = 0;
     quint8 day = 0;
     QTimer timer;
+    bool connectionS = false;
+    bool randomAddress = false;
 
 };
 

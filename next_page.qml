@@ -16,6 +16,11 @@ Rectangle {
     anchors.horizontalCenter: parent.horizontalCenter
     visible: true
 
+//    Component.onCompleted: {
+//        if (BLEdevice.connectionS)
+//            busyIndicator.visible = false;
+//    }
+
 
     SwipeView {
         id: swipeView
@@ -67,6 +72,7 @@ Rectangle {
             tabBar.enabled = true
             swipeView.enabled = true
         }
+
         onInsufficientResources: {
             errorDialog.open()
         }
@@ -80,7 +86,7 @@ Rectangle {
         height: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: true
+        visible: BLEdevice.connectionS ? false : true
         wheelEnabled: false
 
 
@@ -171,7 +177,7 @@ Rectangle {
         enabled: true
 
         onClicked: {
-            BLEdevice.disconnectFromDevice();
+           // BLEdevice.disconnectFromDevice();
             BLEdevice.startDeviceDiscovery();
             pageLoader.source = ""
             pageLoader.source = "main.qml"
